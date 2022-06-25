@@ -41,7 +41,7 @@ import {
 import { Billing } from './entity/billing.entity';
 import { BillingService } from './service/billing.service';
 
-@Controller('closing-revenue')
+@Controller('billing')
 @UseGuards(JwtGuard, AuthorizationGuard)
 export class BillingController {
     constructor(
@@ -54,7 +54,7 @@ export class BillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getExportBillings(
+    async getBillings(
         @Query(
             new RemoveEmptyQueryPipe(),
             new JoiValidationPipe(BillingListQueryStringSchema),

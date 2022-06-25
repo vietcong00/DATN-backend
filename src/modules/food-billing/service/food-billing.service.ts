@@ -27,6 +27,10 @@ const FoodBillingAttribute: (keyof FoodBilling)[] = [
     'foodId',
     'food',
     'note',
+    'selectedCount',
+    'processingCount',
+    'canceledCount',
+    'doneCount',
     'createdAt',
     'updatedAt',
 ];
@@ -39,7 +43,7 @@ export class FoodBillingService {
         private readonly dbManager: EntityManager,
     ) {}
 
-    generateQueryBuilder(queryBuilder, { keyword }) {
+    generateQueryBuilder(queryBuilder, { keyword, billingId }) {
         if (keyword) {
             const likeKeyword = `%${keyword}%`;
             queryBuilder.andWhere(
@@ -52,6 +56,12 @@ export class FoodBillingService {
                 }),
             );
         }
+
+        if (billingId) {
+            queryBuilder.andWhere({
+                billingId,
+            });
+        }
     }
 
     async getFoodBillingList(query: FoodBillingQueryStringDto) {
@@ -62,6 +72,7 @@ export class FoodBillingService {
                 limit = DEFAULT_LIMIT_FOR_PAGINATION,
                 orderBy = DEFAULT_ORDER_BY,
                 orderDirection = ORDER_DIRECTION.ASC,
+                billingId = '',
             } = query;
             const take = +limit || DEFAULT_LIMIT_FOR_PAGINATION;
             const skip = (+page - 1) * take || 0;
@@ -72,11 +83,17 @@ export class FoodBillingService {
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
+                            billingId,
                         }),
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),
                     },
-                    relations: ['food'],
+                    relations: [
+                        'food',
+                        'billing',
+                        'billing.table',
+                        'food.category',
+                    ],
                     take,
                     skip,
                 },

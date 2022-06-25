@@ -59,8 +59,7 @@ export const BillingSchema = {
         .required(),
     arrivalTime: Joi.date()
         .allow(null)
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON)
-        .required(),
+        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON),
     billingStatus: Joi.string()
         .optional()
         .allow(null, '')

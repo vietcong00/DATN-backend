@@ -103,6 +103,7 @@ export class BillingService {
             const billing = await this.dbManager.findOne(Billing, {
                 select: BillingAttribute,
                 where: { id },
+                relations: ['table', 'cashier'],
             });
             return billing;
         } catch (error) {

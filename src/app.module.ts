@@ -17,6 +17,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { FoodModule } from './modules/food/food.module';
 import { ClosingRevenueModule } from './modules/closing-revenue/closing_revenue.module';
 import { FoodBillingModule } from './modules/food-billing/food-billing.module';
+import { BillingModule } from './modules/billing/billing.module';
 
 @Module({
     imports: [
@@ -39,6 +40,7 @@ import { FoodBillingModule } from './modules/food-billing/food-billing.module';
         FoodModule,
         ClosingRevenueModule,
         FoodBillingModule,
+        BillingModule,
     ],
     controllers: [AppController],
     providers: [GlobalDataService],

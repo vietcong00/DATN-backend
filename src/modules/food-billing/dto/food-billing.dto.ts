@@ -24,6 +24,7 @@ export const FoodBillingListQueryStringSchema = Joi.object().keys({
         .valid(...Object.values(ORDER_DIRECTION))
         .optional()
         .allow(null, ''),
+    billingId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
 });
 
 export const FoodBillingSchema = {
@@ -53,6 +54,7 @@ export class FoodBillingQueryStringDto {
     limit?: number;
     keyword?: string;
     orderBy?: OrderBy;
+    billingId?: number;
     orderDirection?: ORDER_DIRECTION;
 }
 

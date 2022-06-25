@@ -41,7 +41,7 @@ import {
 import { FoodBilling } from './entity/food-billing.entity';
 import { FoodBillingService } from './service/food-billing.service';
 
-@Controller('closing-revenue')
+@Controller('food-billing')
 @UseGuards(JwtGuard, AuthorizationGuard)
 export class FoodBillingController {
     constructor(
@@ -54,7 +54,7 @@ export class FoodBillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getExportFoodBillings(
+    async getFoodBillings(
         @Query(
             new RemoveEmptyQueryPipe(),
             new JoiValidationPipe(FoodBillingListQueryStringSchema),

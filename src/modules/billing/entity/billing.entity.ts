@@ -1,29 +1,54 @@
+import { BillingStatus, PaymentMethod } from './../billing.constant';
+import { User } from './../../user/entity/user.entity';
+import { ReasonCanceled } from '../billing.constant';
+import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/BaseEntity';
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../../user/entity/user.entity';
+import { TablesRestaurant } from 'src/modules/table-diagram/entity/tablesRestaurant.entity';
 
 @Entity({ name: 'billings' })
 export class Billing extends BaseEntity {
-    @Column({ length: 255, nullable: false })
-    name: string;
-
     @Column({ length: 2000, nullable: true })
-    description: string;
+    customerName: string;
 
-    @Column({
-        name: 'payerId',
+    @Column({ length: 255, nullable: true })
+    customerPhone: string;
+
+    @Column({ nullable: true })
+    tableId: number;
+
+    @ManyToOne(() => TablesRestaurant)
+    @JoinColumn({
+        name: 'tableId',
     })
-    payerId: number;
+    table: TablesRestaurant;
+
+    @Column({ nullable: true })
+    cashierId: number;
 
     @ManyToOne(() => User)
     @JoinColumn({
-        name: 'payerId',
+        name: 'cashierId',
     })
-    user: User;
+    cashier: User;
 
-    @Column({ type: 'datetime' })
-    payDate: Date;
+    @Column({ nullable: true })
+    paymentTotal: number;
+
+    @Column({ nullable: true })
+    paymentMethod: PaymentMethod;
+
+    @Column({ nullable: true })
+    paymentTime: Date;
+
+    @Column({ nullable: true })
+    arrivalTime: Date;
+
+    @Column({ nullable: true })
+    billingStatus: BillingStatus;
+
+    @Column({ nullable: true })
+    reasonCanceled: ReasonCanceled;
 
     @Column({ length: 2000, nullable: true })
-    url: string;
+    note: string;
 }

@@ -1,59 +1,54 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { TABLE_NAME } from '../constant';
-import { User } from 'src/modules/user/entity/user.entity';
+import {
+    BillingStatus,
+    PaymentMethod,
+} from '../../src/modules/billing/billing.constant';
 dotenv.config();
 
 export class BillingSeeder1724329509103 implements MigrationInterface {
-    tableName = TABLE_NAME.Billings;
-    needToSeed() {
-        const { NEED_SEED_DATA } = process.env;
-        return (
-            NEED_SEED_DATA && NEED_SEED_DATA.split(',').includes(this.tableName)
-        );
-    }
-
     public async up(queryRunner: QueryRunner): Promise<void> {
-        if (this.needToSeed()) {
-            const user = (await queryRunner.manager
-                .getRepository('users')
-                .findOne({ where: {} })) as User;
-            await queryRunner.manager.getRepository(this.tableName).insert([
-                {
-                    name: 'Electric invoice',
-                    description: 'Electric invoice month 11',
-                    url: 'https://drive.google.com/file/d/1rBi1tqfsD5DH8qTEhoTmdzP772ZGmtgB/view?usp=sharing',
-                    userId: user.id,
-                    payDate: '2022-06-01',
-                },
-                {
-                    name: 'Electric invoice',
-                    description: 'Electric invoice month 12',
-                    url: 'https://drive.google.com/file/d/1rBi1tqfsD5DH8qTEhoTmdzP772ZGmtgB/view?usp=sharing',
-                    userId: user.id,
-                    payDate: '2022-06-01',
-                },
-                {
-                    name: 'Fruit invoice',
-                    description: 'Fruit vinmart invoice month 11',
-                    url: 'https://drive.google.com/file/d/1rBi1tqfsD5DH8qTEhoTmdzP772ZGmtgB/view?usp=sharing',
-                    userId: user.id,
-                    payDate: '2022-06-01',
-                },
-                {
-                    name: 'Electric invoice',
-                    description: 'Electric invoice month 1',
-                    url: 'https://drive.google.com/file/d/1rBi1tqfsD5DH8qTEhoTmdzP772ZGmtgB/view?usp=sharing',
-                    userId: user.id,
-                    payDate: '2022-06-01',
-                },
-            ]);
-        }
+        const billings = [
+            {
+                customerName: 'Chu sở Lâm',
+                customerPhone: '0984864713',
+                tableId: 1,
+                cashierId: 1,
+                paymentTotal: 1200000,
+                paymentMethod: PaymentMethod.BANKING,
+                paymentTime: '2022-06-25 10:00:00',
+                arrivalTime: '2022-04-04 9:00:00',
+                billingStatus: BillingStatus.PAID,
+                note: 'ahihi',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                createdBy: 1,
+                updatedBy: 1,
+            },
+            {
+                customerName: 'Tô Mộc Tranh',
+                customerPhone: '09842312533',
+                tableId: 2,
+                cashierId: 1,
+                paymentTotal: 320000,
+                paymentMethod: PaymentMethod.READY_CASH,
+                paymentTime: '2022-06-25 10:00:00',
+                arrivalTime: '2022-04-04 9:00:00',
+                billingStatus: BillingStatus.PAID,
+                note: 'ahihi',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                createdBy: 1,
+                updatedBy: 1,
+            },
+        ];
+        await queryRunner.manager
+            .getRepository(TABLE_NAME.Billings)
+            .insert(billings);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        if (this.needToSeed()) {
-            await queryRunner.manager.getRepository(this.tableName).delete({});
-        }
+        await queryRunner.manager.getRepository(TABLE_NAME.Billings).delete({});
     }
 }

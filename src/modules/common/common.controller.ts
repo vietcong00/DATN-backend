@@ -17,10 +17,8 @@ import { CommonDropdownService } from './services/common-dropdown.service';
 import {
     ListBankDropdown,
     ListCategoryDropdown,
-    ListMaterialDropdown,
     ListProvinceDropdown,
     ListRoleDropdown,
-    ListSupplierDropdown,
     ListUserDropdown,
 } from './dto/responses/user-dropdown-response.dto';
 import { QueryDropdown } from './dto/request/dropdown.dto';
@@ -125,24 +123,6 @@ export class CommonController {
         }
     }
 
-    @Get('/material')
-    @UseGuards(JwtGuard)
-    async getMaterials(
-        @Query(
-            new RemoveEmptyQueryPipe(),
-            new JoiValidationPipe(queryDropdownSchema),
-        )
-        query: QueryDropdown,
-    ) {
-        try {
-            const data: ListMaterialDropdown =
-                await this.commonDropdownService.getListMaterial(query);
-            return new SuccessResponse(data);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
     @Get('/category')
     @UseGuards(JwtGuard)
     async getCategories(
@@ -170,24 +150,6 @@ export class CommonController {
             body.status = BookingStatus.WAITING;
             const newBooking = await this.bookingService.createBooking(body);
             return new SuccessResponse(newBooking);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
-    @Get('/supplier')
-    @UseGuards(JwtGuard)
-    async getSuppliers(
-        @Query(
-            new RemoveEmptyQueryPipe(),
-            new JoiValidationPipe(queryDropdownSchema),
-        )
-        query: QueryDropdown,
-    ) {
-        try {
-            const data: ListSupplierDropdown =
-                await this.commonDropdownService.getListSupplier(query);
-            return new SuccessResponse(data);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

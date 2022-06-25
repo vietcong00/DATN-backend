@@ -1,11 +1,10 @@
-import { Global, Module } from '@nestjs/common';
-import { BillingService } from './services/billing.service';
-import { BillingController } from './billing.controller';
+import { Module } from '@nestjs/common';
 import { DatabaseService } from 'src/common/services/database.service';
-@Global()
+import { BillingService } from './service/billing.service';
+import { BillingController } from './billing.controller';
+
 @Module({
-    imports: [],
-    providers: [BillingService, DatabaseService],
     controllers: [BillingController],
+    providers: [BillingService, DatabaseService],
 })
 export class BillingModule {}

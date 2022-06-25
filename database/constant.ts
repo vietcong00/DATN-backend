@@ -28,16 +28,8 @@ export enum TABLE_NAME {
     Categories = 'categories',
     Foods = 'foods',
     TablesRestaurants = 'tables_restaurants',
-    Suppliers = 'suppliers',
-    Materials = 'materials',
-    ConvertHistories = 'convert_histories',
-    ImportMaterials = 'import_materials',
-    ImportMaterialOrders = 'import_material_orders',
-    ExportMaterials = 'export_materials',
-    ExportMaterialOrders = 'export_material_orders',
-    CheckInventories = 'check_inventories',
-    CheckInventoryDetails = 'check_inventory_details',
-    ClosingRevenue = 'closing_revenue',
+    ClosingRevenues = 'closing_revenues',
+    FoodBillings = 'food_billings',
 }
 
 export const commonColumns: TableColumnOptions[] = [
@@ -89,7 +81,6 @@ export enum DBPermissionActions {
     DELETE = 'delete',
     LOGIN = 'login',
     UPDATE_ROLE = 'update_role',
-    CONVERT_MATERIAL = 'convert_material',
 }
 
 export enum DBPermissionResources {
@@ -99,15 +90,6 @@ export enum DBPermissionResources {
     BOOKING = 'booking',
     MENU_FOOD = 'food',
     MENU_CATEGORY = 'category',
-    STORE_MATERIAL = 'store_material',
-    STORE_CONVERT = 'store_convert',
-    STORE_SUPPLIER = 'store_supplier',
-    STORE_IMPORT_MATERIAL = 'store_import_material',
-    STORE_IMPORT_MATERIAL_DETAIL = 'store_import_material_detail',
-    STORE_EXPORT_MATERIAL = 'store_export',
-    STORE_EXPORT_MATERIAL_DETAIL = 'store_export_material_detail',
-    STORE_CHECK_INVENTORY = 'store_check_inventory',
-    STORE_INVENTORY_DETAIL = 'store_inventory_detail',
     BILLING = 'billing',
     CLOSING_REVENUE = 'closing_revenue',
     ROLE = 'role',

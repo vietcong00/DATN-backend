@@ -31,21 +31,21 @@ import { HttpStatus } from 'src/common/constants';
 import { RemoveEmptyQueryPipe } from 'src/common/pipes/remove.empty.query.pipe';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
 import {
-    BillingListQueryStringSchema,
-    BillingQueryStringDto,
-    CreateBillingSchema,
-    CreateBillingDto,
-    UpdateBillingSchema,
-    UpdateBillingDto,
-} from './dto/billing.dto';
-import { Billing } from './entity/billing.entity';
-import { BillingService } from './service/billing.service';
+    FoodBillingListQueryStringSchema,
+    FoodBillingQueryStringDto,
+    CreateFoodBillingSchema,
+    CreateFoodBillingDto,
+    UpdateFoodBillingSchema,
+    UpdateFoodBillingDto,
+} from './dto/food-billing.dto';
+import { FoodBilling } from './entity/food-billing.entity';
+import { FoodBillingService } from './service/food-billing.service';
 
 @Controller('closing-revenue')
 @UseGuards(JwtGuard, AuthorizationGuard)
-export class BillingController {
+export class FoodBillingController {
     constructor(
-        private readonly billingService: BillingService,
+        private readonly foodBillingService: FoodBillingService,
         private readonly i18n: I18nRequestScopeService,
         private readonly databaseService: DatabaseService,
     ) {}
@@ -54,17 +54,16 @@ export class BillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getExportBillings(
+    async getExportFoodBillings(
         @Query(
             new RemoveEmptyQueryPipe(),
-            new JoiValidationPipe(BillingListQueryStringSchema),
+            new JoiValidationPipe(FoodBillingListQueryStringSchema),
         )
-        query: BillingQueryStringDto,
+        query: FoodBillingQueryStringDto,
     ) {
         try {
-            const materialList = await this.billingService.getBillingList(
-                query,
-            );
+            const materialList =
+                await this.foodBillingService.getFoodBillingList(query);
             return new SuccessResponse(materialList);
         } catch (error) {
             throw new InternalServerErrorException(error);
@@ -75,9 +74,11 @@ export class BillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getBilling(@Param('id', ParseIntPipe) id: number) {
+    async getFoodBilling(@Param('id', ParseIntPipe) id: number) {
         try {
-            const material = await this.billingService.getBillingDetail(id);
+            const material = await this.foodBillingService.getFoodBillingDetail(
+                id,
+            );
             if (!material) {
                 const message = await this.i18n.translate(
                     'material.message.materialNotFound',
@@ -98,21 +99,25 @@ export class BillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
     ])
-    async createBilling(
+    async createFoodBilling(
         @Request() req,
-        @Body(new TrimObjectPipe(), new JoiValidationPipe(CreateBillingSchema))
-        body: CreateBillingDto,
+        @Body(
+            new TrimObjectPipe(),
+            new JoiValidationPipe(CreateFoodBillingSchema),
+        )
+        body: CreateFoodBillingDto,
     ) {
         try {
             body.createdBy = req.loginUser.id;
-            const newBilling = await this.billingService.createBilling(body);
+            const newFoodBilling =
+                await this.foodBillingService.createFoodBilling(body);
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,
                 route: req.route,
                 oldValue: {},
-                newValue: { ...newBilling },
+                newValue: { ...newFoodBilling },
             });
-            return new SuccessResponse(newBilling);
+            return new SuccessResponse(newFoodBilling);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
@@ -122,18 +127,21 @@ export class BillingController {
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,
     ])
-    async updateBillingStatus(
+    async updateFoodBillingStatus(
         @Request() req,
         @Param('id', ParseIntPipe) id: number,
-        @Body(new TrimObjectPipe(), new JoiValidationPipe(UpdateBillingSchema))
-        body: UpdateBillingDto,
+        @Body(
+            new TrimObjectPipe(),
+            new JoiValidationPipe(UpdateFoodBillingSchema),
+        )
+        body: UpdateFoodBillingDto,
     ) {
         try {
-            const oldBilling = await this.databaseService.getDataById(
-                Billing,
+            const oldFoodBilling = await this.databaseService.getDataById(
+                FoodBilling,
                 id,
             );
-            if (!oldBilling) {
+            if (!oldFoodBilling) {
                 const message = await this.i18n.translate(
                     'material.message.materialNotFound',
                 );
@@ -143,18 +151,16 @@ export class BillingController {
                     [],
                 );
             }
-            const material = await this.billingService.updateBillingStatus(
-                id,
-                body,
-            );
+            const material =
+                await this.foodBillingService.updateFoodBillingStatus(id, body);
             const newValue = await this.databaseService.getDataById(
-                Billing,
+                FoodBilling,
                 id,
             );
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,
                 route: req.route,
-                oldValue: { ...oldBilling },
+                oldValue: { ...oldFoodBilling },
                 newValue: { ...newValue },
             });
             return new SuccessResponse(material);

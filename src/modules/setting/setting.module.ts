@@ -14,4 +14,4 @@ import { UserService } from '../user/services/user.service';
         UserService,
     ],
 })
-export class SetttingModule {}
+export class SettingModule {}

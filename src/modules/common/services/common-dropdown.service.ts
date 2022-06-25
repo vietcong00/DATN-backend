@@ -1,4 +1,3 @@
-import { Supplier } from './../../supplier/entity/supplier.entity';
 import { Category } from '../../category/entity/category.entity';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
@@ -7,10 +6,8 @@ import { DEFAULT_LIMIT_FOR_DROPDOWN } from '../../../common/constants';
 import {
     ListBankDropdown,
     ListCategoryDropdown,
-    ListMaterialDropdown,
     ListProvinceDropdown,
     ListRoleDropdown,
-    ListSupplierDropdown,
     ListUserDropdown,
 } from '../dto/responses/user-dropdown-response.dto';
 import { QueryDropdown } from '../dto/request/dropdown.dto';
@@ -24,18 +21,12 @@ import {
 } from '../common.constant';
 import { Province } from 'src/modules/user/entity/province.entity';
 import { UserStatus } from 'src/modules/user/user.constant';
-import { Material } from 'src/modules/material/entity/material.entity';
 
 const userDropdownListAttributes: (keyof User)[] = ['id', 'fullName', 'status'];
 const roleDropdownListAttributes: (keyof Role)[] = ['id', 'name'];
 const bankDropdownListAttributes: (keyof Bank)[] = ['id', 'name', 'code'];
 const provinceDropdownListAttributes: (keyof Province)[] = ['id', 'name'];
-const materialDropdownListAttributes: (keyof Material)[] = [
-    'id',
-    'material',
-    'unit',
-    'quantity',
-];
+
 const categoryDropdownListAttributes: (keyof Category)[] = [
     'id',
     'name',
@@ -43,7 +34,6 @@ const categoryDropdownListAttributes: (keyof Category)[] = [
     'note',
 ];
 
-const supplierDropdownListAttributes: (keyof Supplier)[] = ['id', 'name'];
 @Injectable()
 export class CommonDropdownService {
     constructor(
@@ -183,31 +173,6 @@ export class CommonDropdownService {
         }
     }
 
-    async getListMaterial(query: QueryDropdown): Promise<ListMaterialDropdown> {
-        try {
-            const { page, limit } = query;
-            const [items, totalItems] = await this.dbManager.findAndCount(
-                Material,
-                {
-                    select: materialDropdownListAttributes,
-                    where: (queryBuilder) =>
-                        this.generateQueryBuilder(queryBuilder, {
-                            page,
-                            limit,
-                            status: [],
-                            withDeleted: false,
-                        }),
-                },
-            );
-            return {
-                totalItems,
-                items,
-            };
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
-    }
-
     async getListCategory(query: QueryDropdown): Promise<ListCategoryDropdown> {
         try {
             const { page, limit } = query;
@@ -215,31 +180,6 @@ export class CommonDropdownService {
                 Category,
                 {
                     select: categoryDropdownListAttributes,
-                    where: (queryBuilder) =>
-                        this.generateQueryBuilder(queryBuilder, {
-                            page,
-                            limit,
-                            status: [],
-                            withDeleted: false,
-                        }),
-                },
-            );
-            return {
-                totalItems,
-                items,
-            };
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    async getListSupplier(query: QueryDropdown): Promise<ListSupplierDropdown> {
-        try {
-            const { page, limit } = query;
-            const [items, totalItems] = await this.dbManager.findAndCount(
-                Supplier,
-                {
-                    select: supplierDropdownListAttributes,
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             page,

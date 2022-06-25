@@ -1,16 +1,12 @@
-import {
-    BillingStatus,
-    PaymentMethod,
-    ReasonCanceled,
-} from '../../src/modules/billing/billing.constant';
+import { SHIFT } from '../../src/modules/closing-revenue/closing_revenue.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
 
-export class Billing1632891593012 implements MigrationInterface {
+export class ClosingRevenue1632891593050 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: TABLE_NAME.Billings,
+                name: TABLE_NAME.ClosingRevenues,
                 columns: [
                     {
                         name: 'id',
@@ -20,51 +16,35 @@ export class Billing1632891593012 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'customerName',
-                        type: 'varchar',
-                        length: '255',
+                        name: 'shift',
+                        type: 'enum',
+                        enum: Object.values(SHIFT),
                         isNullable: true,
                     },
                     {
-                        name: 'customerPhone',
-                        type: 'varchar',
-                        length: '255',
+                        name: 'shiftLeaderId',
+                        type: 'int',
                         isNullable: true,
                     },
                     {
-                        name: 'tableId',
+                        name: 'cashAtBeginningOfShift',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'cashierId',
+                        name: 'cashAtEndingOfShift',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'paymentTotal',
+                        name: 'bankingRevenue',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'paymentMethod',
-                        type: 'enum',
-                        enum: Object.values(PaymentMethod),
-                    },
-                    {
-                        name: 'paymentTime',
-                        type: 'datetime',
-                    },
-                    {
-                        name: 'arrivalTime',
-                        type: 'datetime',
-                    },
-                    {
-                        name: 'billingStatus',
-                        type: 'enum',
-                        enum: Object.values(BillingStatus),
-                    },
-                    {
-                        name: 'reasonCanceled',
-                        type: 'enum',
-                        enum: Object.values(ReasonCanceled),
+                        name: 'differenceRevenue',
+                        type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'note',
@@ -108,6 +88,6 @@ export class Billing1632891593012 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable(TABLE_NAME.Billings);
+        await queryRunner.dropTable(TABLE_NAME.ClosingRevenues);
     }
 }

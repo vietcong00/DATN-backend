@@ -14,25 +14,25 @@ import {
     ORDER_DIRECTION,
 } from 'src/common/constants';
 import { EntityManager, Brackets, Like } from 'typeorm';
-import { Food } from '../entity/food.entity';
 import {
-    FoodQueryStringDto,
-    FoodDetailResponseDto,
-    CreateFoodDto,
-    UpdateFoodDto,
-} from '../dto/food.dto';
+    FoodBillingQueryStringDto,
+    FoodBillingDetailResponseDto,
+    CreateFoodBillingDto,
+    UpdateFoodBillingDto,
+} from '../dto/food-billing.dto';
+import { FoodBilling } from '../entity/food-billing.entity';
 
-const FoodAttribute: (keyof Food)[] = [
+const FoodBillingAttribute: (keyof FoodBilling)[] = [
     'id',
-    'foodImgId',
-    'foodName',
-    'price',
-    'categoryId',
+    'foodId',
+    'food',
+    'note',
     'createdAt',
+    'updatedAt',
 ];
 
 @Injectable()
-export class FoodService {
+export class FoodBillingService {
     constructor(
         @Optional() @Inject(REQUEST) private readonly request: Request,
         @InjectEntityManager()
@@ -46,7 +46,7 @@ export class FoodService {
                 new Brackets((qb) => {
                     qb.where([
                         {
-                            foodName: Like(likeKeyword),
+                            shiftLeaderId: Like(likeKeyword),
                         },
                     ]);
                 }),
@@ -54,7 +54,7 @@ export class FoodService {
         }
     }
 
-    async getFoodList(query: FoodQueryStringDto) {
+    async getFoodBillingList(query: FoodBillingQueryStringDto) {
         try {
             const {
                 keyword = '',
@@ -66,9 +66,9 @@ export class FoodService {
             const take = +limit || DEFAULT_LIMIT_FOR_PAGINATION;
             const skip = (+page - 1) * take || 0;
             const [items, totalItems] = await this.dbManager.findAndCount(
-                Food,
+                FoodBilling,
                 {
-                    select: FoodAttribute,
+                    select: FoodBillingAttribute,
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
@@ -76,7 +76,7 @@ export class FoodService {
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),
                     },
-                    relations: ['category'],
+                    relations: ['food'],
                     take,
                     skip,
                 },
@@ -90,27 +90,33 @@ export class FoodService {
         }
     }
 
-    async getFoodDetail(id: number): Promise<FoodDetailResponseDto> {
+    async getFoodBillingDetail(
+        id: number,
+    ): Promise<FoodBillingDetailResponseDto> {
         try {
-            const food = await this.dbManager.findOne(Food, {
-                select: FoodAttribute,
+            const foodBilling = await this.dbManager.findOne(FoodBilling, {
+                select: FoodBillingAttribute,
                 where: { id },
             });
-            return food;
+            return foodBilling;
         } catch (error) {
             throw error;
         }
     }
 
-    async createFood(food: CreateFoodDto): Promise<FoodDetailResponseDto> {
+    async createFoodBilling(
+        foodBilling: CreateFoodBillingDto,
+    ): Promise<FoodBillingDetailResponseDto> {
         try {
-            const insertedFood = await this.dbManager
-                .getRepository(Food)
-                .insert(food);
-            const foodId = insertedFood?.identifiers[0]?.id;
-            if (foodId) {
-                const foodDetail = await this.getFoodDetail(foodId);
-                return foodDetail;
+            const insertedMaterial = await this.dbManager
+                .getRepository(FoodBilling)
+                .insert(foodBilling);
+            const foodBillingId = insertedMaterial?.identifiers[0]?.id;
+            if (foodBillingId) {
+                const foodBillingDetail = await this.getFoodBillingDetail(
+                    foodBillingId,
+                );
+                return foodBillingDetail;
             }
             throw new InternalServerErrorException();
         } catch (error) {
@@ -118,26 +124,14 @@ export class FoodService {
         }
     }
 
-    async updateFoodStatus(id: number, updateFood: UpdateFoodDto) {
+    async updateFoodBillingStatus(
+        id: number,
+        updateFoodBilling: UpdateFoodBillingDto,
+    ) {
         try {
-            await this.dbManager.update(Food, id, updateFood);
-            const savedFood = await this.getFoodDetail(id);
-            return savedFood;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async deleteFood(id: number, deletedBy: number): Promise<void> {
-        try {
-            await this.dbManager.update(
-                Food,
-                { id },
-                {
-                    deletedAt: new Date(),
-                    deletedBy,
-                },
-            );
+            await this.dbManager.update(FoodBilling, id, updateFoodBilling);
+            const savedMaterial = await this.getFoodBillingDetail(id);
+            return savedMaterial;
         } catch (error) {
             throw error;
         }

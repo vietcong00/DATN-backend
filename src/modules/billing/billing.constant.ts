@@ -1,43 +1,22 @@
-import * as BaseJoi from 'joi';
-import JoiDate from '@joi/date';
-import {
-    INPUT_TEXT_MAX_LENGTH,
-    TEXTAREA_MAX_LENGTH,
-    REGEX,
-    INPUT_URL_MAX_LENGTH,
-    MAX_INTEGER,
-    DATE_TIME_FORMAT,
-} from 'src/common/constants';
+export const MODULE_NAME = 'closing-revenue';
 
-const Joi = BaseJoi.extend(JoiDate);
-
-export enum BillingOrderBy {
-    NAME = 'name',
+export enum OrderBy {
     CREATED_AT = 'createdAt',
 }
-export const BillingSchema = {
-    name: Joi.string()
-        .max(INPUT_TEXT_MAX_LENGTH)
-        .required()
-        .label('billing.fields.name'),
-    description: Joi.string()
-        .allow(null, '')
-        .max(TEXTAREA_MAX_LENGTH)
-        .optional()
-        .label('billing.fields.description'),
-    url: Joi.string()
-        .regex(REGEX.URL)
-        .max(INPUT_URL_MAX_LENGTH)
-        .label('billing.fields.url')
-        .required(),
-    payerId: Joi.number()
-        .required()
-        .positive()
-        .max(MAX_INTEGER)
-        .label('billing.fields.userId'),
-    payDate: Joi.date()
-        .max('now')
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_SS_COLON)
-        .required()
-        .label('billing.fields.payDate'),
-};
+
+export enum BillingStatus {
+    EATING = 'eating',
+    WAIT_FOR_PAY = 'wait_for_pay',
+    CANCELED = 'canceled',
+    PAID = 'paid',
+}
+
+export enum ReasonCanceled {
+    OUT_OF_FOOD = 'out_of_food',
+    ANOTHER_REASON = 'another_reason',
+}
+
+export enum PaymentMethod {
+    READY_CASH = 'ready_cash',
+    BANKING = 'banking',
+}

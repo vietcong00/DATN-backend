@@ -53,7 +53,7 @@ export class FoodController {
 
     @Get()
     @Permissions([`${PermissionResources.MENU_FOOD}_${PermissionActions.READ}`])
-    async getExportFoods(
+    async getFoods(
         @Query(
             new RemoveEmptyQueryPipe(),
             new JoiValidationPipe(FoodListQueryStringSchema),
@@ -61,8 +61,8 @@ export class FoodController {
         query: FoodQueryStringDto,
     ) {
         try {
-            const materialList = await this.foodService.getFoodList(query);
-            return new SuccessResponse(materialList);
+            const foodList = await this.foodService.getFoodList(query);
+            return new SuccessResponse(foodList);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
@@ -72,10 +72,10 @@ export class FoodController {
     @Permissions([`${PermissionResources.MENU_FOOD}_${PermissionActions.READ}`])
     async getFood(@Param('id', ParseIntPipe) id: number) {
         try {
-            const material = await this.foodService.getFoodDetail(id);
-            if (!material) {
+            const food = await this.foodService.getFoodDetail(id);
+            if (!food) {
                 const message = await this.i18n.translate(
-                    'material.message.materialNotFound',
+                    'food.message.foodNotFound',
                 );
                 return new ErrorResponse(
                     HttpStatus.ITEM_NOT_FOUND,
@@ -83,7 +83,7 @@ export class FoodController {
                     [],
                 );
             }
-            return new SuccessResponse(material);
+            return new SuccessResponse(food);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
@@ -127,7 +127,7 @@ export class FoodController {
             const oldFood = await this.databaseService.getDataById(Food, id);
             if (!oldFood) {
                 const message = await this.i18n.translate(
-                    'material.message.materialNotFound',
+                    'food.message.foodNotFound',
                 );
                 return new ErrorResponse(
                     HttpStatus.ITEM_NOT_FOUND,
@@ -135,7 +135,7 @@ export class FoodController {
                     [],
                 );
             }
-            const material = await this.foodService.updateFoodStatus(id, body);
+            const food = await this.foodService.updateFoodStatus(id, body);
             const newValue = await this.databaseService.getDataById(Food, id);
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,
@@ -143,7 +143,7 @@ export class FoodController {
                 oldValue: { ...oldFood },
                 newValue: { ...newValue },
             });
-            return new SuccessResponse(material);
+            return new SuccessResponse(food);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

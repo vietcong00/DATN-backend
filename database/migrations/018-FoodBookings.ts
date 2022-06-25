@@ -1,16 +1,12 @@
-import {
-    BillingStatus,
-    PaymentMethod,
-    ReasonCanceled,
-} from '../../src/modules/billing/billing.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
+import { ReasonCanceled } from '../../src/modules/food-billing/food-billing.constant';
 
-export class Billing1632891593012 implements MigrationInterface {
+export class FoodBooking1632891593051 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: TABLE_NAME.Billings,
+                name: TABLE_NAME.FoodBillings,
                 columns: [
                     {
                         name: 'id',
@@ -20,51 +16,40 @@ export class Billing1632891593012 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'customerName',
-                        type: 'varchar',
-                        length: '255',
+                        name: 'foodId',
+                        type: 'int',
                         isNullable: true,
                     },
                     {
-                        name: 'customerPhone',
-                        type: 'varchar',
-                        length: '255',
+                        name: 'billingId',
+                        type: 'int',
                         isNullable: true,
                     },
                     {
-                        name: 'tableId',
+                        name: 'selectedCount',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'cashierId',
+                        name: 'processingCount',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'paymentTotal',
+                        name: 'doneCount',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
-                        name: 'paymentMethod',
-                        type: 'enum',
-                        enum: Object.values(PaymentMethod),
-                    },
-                    {
-                        name: 'paymentTime',
-                        type: 'datetime',
-                    },
-                    {
-                        name: 'arrivalTime',
-                        type: 'datetime',
-                    },
-                    {
-                        name: 'billingStatus',
-                        type: 'enum',
-                        enum: Object.values(BillingStatus),
+                        name: 'canceledCount',
+                        type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'reasonCanceled',
                         type: 'enum',
                         enum: Object.values(ReasonCanceled),
+                        isNullable: true,
                     },
                     {
                         name: 'note',
@@ -108,6 +93,6 @@ export class Billing1632891593012 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable(TABLE_NAME.Billings);
+        await queryRunner.dropTable(TABLE_NAME.FoodBillings);
     }
 }

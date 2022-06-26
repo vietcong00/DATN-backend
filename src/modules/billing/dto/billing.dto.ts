@@ -44,8 +44,7 @@ export const BillingSchema = {
     customerPhone: Joi.string()
         .allow(null)
         .regex(RegExp(REGEX.PHONE_NUMBER))
-        .max(INPUT_PHONE_MAX_LENGTH)
-        .required(),
+        .max(INPUT_PHONE_MAX_LENGTH),
     tableId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     cashierId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     paymentTotal: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
@@ -55,8 +54,7 @@ export const BillingSchema = {
         .valid(...Object.values(PaymentMethod)),
     paymentTime: Joi.date()
         .allow(null)
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON)
-        .required(),
+        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON),
     arrivalTime: Joi.date()
         .allow(null)
         .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON),

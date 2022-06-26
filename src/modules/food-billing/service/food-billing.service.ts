@@ -62,6 +62,8 @@ export class FoodBillingService {
                 billingId,
             });
         }
+
+        queryBuilder.andWhere('selectedCount > doneCount+canceledCount');
     }
 
     async getFoodBillingList(query: FoodBillingQueryStringDto) {

@@ -34,14 +34,17 @@ export class Billing1632891593012 implements MigrationInterface {
                     {
                         name: 'tableId',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'cashierId',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'paymentTotal',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'paymentMethod',
@@ -51,10 +54,12 @@ export class Billing1632891593012 implements MigrationInterface {
                     {
                         name: 'paymentTime',
                         type: 'datetime',
+                        isNullable: true,
                     },
                     {
                         name: 'arrivalTime',
                         type: 'datetime',
+                        isNullable: true,
                     },
                     {
                         name: 'billingStatus',

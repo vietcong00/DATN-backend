@@ -17,8 +17,6 @@ const tableAttributes: (keyof TablesRestaurant)[] = [
     'id',
     'name',
     'status',
-    'nameCustomer',
-    'phone',
     'arrivalTime',
     'numberSeat',
 ];

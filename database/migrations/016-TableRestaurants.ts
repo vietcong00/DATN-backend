@@ -28,18 +28,6 @@ export class Booking1632891593033 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
-                        name: 'nameCustomer',
-                        type: 'varchar',
-                        length: '255',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'phone',
-                        type: 'varchar',
-                        length: '255',
-                        isNullable: true,
-                    },
-                    {
                         name: 'arrivalTime',
                         type: 'datetime',
                         isNullable: true,

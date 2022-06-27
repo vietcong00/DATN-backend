@@ -12,6 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { Province } from '../user/entity/province.entity';
 import { GlobalDataService } from './services/global-data.service';
 import { BookingService } from '../booking/services/booking.service';
+import { MobileService } from './services/mobile.service';
+import { FoodBillingService } from '../food-billing/service/food-billing.service';
 
 @Global()
 @Module({
@@ -36,6 +38,8 @@ import { BookingService } from '../booking/services/booking.service';
         CommonDropdownService,
         GlobalDataService,
         BookingService,
+        MobileService,
+        FoodBillingService,
     ],
     exports: [ConfigService, ProvinceService, GlobalDataService],
 })

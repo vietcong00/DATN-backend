@@ -13,6 +13,9 @@ export class ListCategoryDropdown extends CommonListResponse<CategoryDropdownRes
     items: CategoryDropdownResponseDto[];
 }
 
+export class ListFoodDropdown extends CommonListResponse<FoodDropdownResponseDto> {
+    items: FoodDropdownResponseDto[];
+}
 export class ListBankDropdown extends CommonListResponse<BankDropdownResponseDto> {
     items: BankDropdownResponseDto[];
 }
@@ -29,6 +32,12 @@ export class CategoryDropdownResponseDto {
     name: string;
     priority: number;
     note: string;
+}
+
+export class FoodDropdownResponseDto {
+    id: number;
+    foodName: string;
+    price: number;
 }
 
 export class BankDropdownResponseDto {

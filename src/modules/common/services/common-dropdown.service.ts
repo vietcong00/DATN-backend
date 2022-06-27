@@ -6,6 +6,7 @@ import { DEFAULT_LIMIT_FOR_DROPDOWN } from '../../../common/constants';
 import {
     ListBankDropdown,
     ListCategoryDropdown,
+    ListFoodDropdown,
     ListProvinceDropdown,
     ListRoleDropdown,
     ListUserDropdown,
@@ -21,19 +22,19 @@ import {
 } from '../common.constant';
 import { Province } from 'src/modules/user/entity/province.entity';
 import { UserStatus } from 'src/modules/user/user.constant';
+import { Food } from 'src/modules/food/entity/food.entity';
 
 const userDropdownListAttributes: (keyof User)[] = ['id', 'fullName', 'status'];
 const roleDropdownListAttributes: (keyof Role)[] = ['id', 'name'];
 const bankDropdownListAttributes: (keyof Bank)[] = ['id', 'name', 'code'];
 const provinceDropdownListAttributes: (keyof Province)[] = ['id', 'name'];
-
 const categoryDropdownListAttributes: (keyof Category)[] = [
     'id',
     'name',
     'priority',
     'note',
 ];
-
+const foodDropdownListAttributes: (keyof Food)[] = ['id', 'foodName', 'price'];
 @Injectable()
 export class CommonDropdownService {
     constructor(
@@ -180,6 +181,31 @@ export class CommonDropdownService {
                 Category,
                 {
                     select: categoryDropdownListAttributes,
+                    where: (queryBuilder) =>
+                        this.generateQueryBuilder(queryBuilder, {
+                            page,
+                            limit,
+                            status: [],
+                            withDeleted: false,
+                        }),
+                },
+            );
+            return {
+                totalItems,
+                items,
+            };
+        } catch (error) {
+            throw new InternalServerErrorException();
+        }
+    }
+
+    async getListFood(query: QueryDropdown): Promise<ListFoodDropdown> {
+        try {
+            const { page, limit } = query;
+            const [items, totalItems] = await this.dbManager.findAndCount(
+                Food,
+                {
+                    select: foodDropdownListAttributes,
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             page,

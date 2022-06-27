@@ -29,6 +29,7 @@ const ClosingRevenueAttribute: (keyof ClosingRevenue)[] = [
     'cashAtBeginningOfShift',
     'cashAtEndingOfShift',
     'bankingRevenue',
+    'billingRevenue',
     'differenceRevenue',
     'note',
     'createdAt',
@@ -106,26 +107,6 @@ export class ClosingRevenueService {
                 },
             );
             return checkInventory;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async createClosingRevenue(
-        checkInventory: CreateClosingRevenueDto,
-    ): Promise<ClosingRevenueDetailResponseDto> {
-        try {
-            const insertedMaterial = await this.dbManager
-                .getRepository(ClosingRevenue)
-                .insert(checkInventory);
-            const checkInventoryId = insertedMaterial?.identifiers[0]?.id;
-            if (checkInventoryId) {
-                const checkInventoryDetail = await this.getClosingRevenueDetail(
-                    checkInventoryId,
-                );
-                return checkInventoryDetail;
-            }
-            throw new InternalServerErrorException();
         } catch (error) {
             throw error;
         }

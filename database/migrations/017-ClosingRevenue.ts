@@ -42,6 +42,11 @@ export class ClosingRevenue1632891593050 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: 'billingRevenue',
+                        type: 'int',
+                        isNullable: true,
+                    },
+                    {
                         name: 'differenceRevenue',
                         type: 'int',
                         isNullable: true,

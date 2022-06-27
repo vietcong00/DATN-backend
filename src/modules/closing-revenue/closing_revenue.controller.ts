@@ -94,34 +94,6 @@ export class ClosingRevenueController {
         }
     }
 
-    @Post()
-    @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
-    ])
-    async createClosingRevenue(
-        @Request() req,
-        @Body(
-            new TrimObjectPipe(),
-            new JoiValidationPipe(CreateClosingRevenueSchema),
-        )
-        body: CreateClosingRevenueDto,
-    ) {
-        try {
-            body.createdBy = req.loginUser.id;
-            const newClosingRevenue =
-                await this.closingRevenueService.createClosingRevenue(body);
-            await this.databaseService.recordUserLogging({
-                userId: req.loginUser?.id,
-                route: req.route,
-                oldValue: {},
-                newValue: { ...newClosingRevenue },
-            });
-            return new SuccessResponse(newClosingRevenue);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
     @Patch(':id')
     @Permissions([
         `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,

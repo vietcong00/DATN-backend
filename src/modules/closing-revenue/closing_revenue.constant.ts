@@ -5,6 +5,6 @@ export enum OrderBy {
 }
 
 export enum SHIFT {
-    MORNING_SHIFT = 'morningShift',
+    MORNING_SHIFT = '1',
     AFTERNOON_SHIFT = 'afternoonShift',
 }

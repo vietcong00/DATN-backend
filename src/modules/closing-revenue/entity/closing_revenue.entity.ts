@@ -3,7 +3,7 @@ import { User } from 'src/modules/user/entity/user.entity';
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/BaseEntity';
 
-@Entity({ name: 'closing_revenue' })
+@Entity({ name: 'closing_revenues' })
 export class ClosingRevenue extends BaseEntity {
     @Column({ nullable: true })
     shift: SHIFT;
@@ -19,6 +19,9 @@ export class ClosingRevenue extends BaseEntity {
 
     @Column({ nullable: true })
     cashAtBeginningOfShift: number;
+
+    @Column({ nullable: true })
+    billingRevenue: number;
 
     @Column({ nullable: true })
     cashAtEndingOfShift: number;

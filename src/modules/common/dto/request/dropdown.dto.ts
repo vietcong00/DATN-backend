@@ -19,6 +19,7 @@ export class QueryDropdown {
     withDeleted?: WITH_DELETED_OPTION;
     withInactive?: WITH_INACTIVE_OPTION;
     withWaitingForApproval?: WITH_WAITING_FOR_APPROVAL_OPTION;
+    tableId?: number;
 }
 
 export const queryDropdownSchema = Joi.object().keys({
@@ -40,4 +41,5 @@ export const queryDropdownSchema = Joi.object().keys({
         .valid(...Object.values(WITH_INACTIVE_OPTION))
         .allow(null, '')
         .optional(),
+    tableId: Joi.number().allow(null).optional(),
 });

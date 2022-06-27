@@ -41,6 +41,7 @@ export const ClosingRevenueSchema = {
         .max(MAX_INTEGER)
         .optional()
         .allow(null, ''),
+    billingRevenue: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     bankingRevenue: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     differenceRevenue: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     note: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional().allow(null, ''),
@@ -64,12 +65,7 @@ export class ClosingRevenueQueryStringDto {
 
 export class CreateClosingRevenueDto {
     shift: SHIFT;
-    shiftLeaderId: number;
-    cashAtBeginningOfShift: number;
-    cashAtEndingOfShift: number;
-    bankingRevenue: number;
-    differenceRevenue: number;
-    note: string;
+    billingRevenue: number;
     createdBy?: number;
 }
 
@@ -91,6 +87,7 @@ export class ClosingRevenueDetailResponseDto {
     cashAtBeginningOfShift: number;
     cashAtEndingOfShift: number;
     bankingRevenue: number;
+    billingRevenue: number;
     differenceRevenue: number;
     note: string;
     createdBy?: number;

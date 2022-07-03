@@ -73,6 +73,7 @@ export class FoodDetailResponseDto {
     foodName: string;
     price: number;
     foodImgId?: number;
+    foodImg?: Record<string, string>;
     categoryId?: number;
     createdBy?: number;
     createdAt?: Date;

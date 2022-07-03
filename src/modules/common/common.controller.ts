@@ -192,6 +192,28 @@ export class CommonController {
         }
     }
 
+    @Get('/billing/table/:id')
+    async getBilling(@Param('id', ParseIntPipe) id: number) {
+        try {
+            const material = await this.mobileService.getBillingRelativeTable(
+                id,
+            );
+            if (!material) {
+                const message = await this.i18n.translate(
+                    'material.message.materialNotFound',
+                );
+                return new ErrorResponse(
+                    HttpStatus.ITEM_NOT_FOUND,
+                    message,
+                    [],
+                );
+            }
+            return new SuccessResponse(material);
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+    }
+
     @Get('/food-billing')
     async getFoodBilling(
         @Query(
@@ -219,6 +241,9 @@ export class CommonController {
         body: CreateFoodBillingDto,
     ) {
         try {
+            body.processingCount = 0;
+            body.doneCount = 0;
+            body.canceledCount = 0;
             const newFoodBilling =
                 await this.foodBillingService.createFoodBilling(body);
             return new SuccessResponse(newFoodBilling);

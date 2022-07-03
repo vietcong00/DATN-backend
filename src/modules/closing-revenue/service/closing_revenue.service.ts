@@ -1,9 +1,4 @@
-import {
-    Injectable,
-    Optional,
-    Inject,
-    InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, Optional, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { InjectEntityManager } from '@nestjs/typeorm';
@@ -17,7 +12,6 @@ import { EntityManager, Brackets, Like } from 'typeorm';
 import {
     ClosingRevenueQueryStringDto,
     ClosingRevenueDetailResponseDto,
-    CreateClosingRevenueDto,
     UpdateClosingRevenueDto,
 } from '../dto/closing_revenue.dto';
 import { ClosingRevenue } from '../entity/closing_revenue.entity';

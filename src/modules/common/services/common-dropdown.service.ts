@@ -23,6 +23,8 @@ import {
 import { Province } from 'src/modules/user/entity/province.entity';
 import { UserStatus } from 'src/modules/user/user.constant';
 import { Food } from 'src/modules/food/entity/food.entity';
+import { File } from 'src/modules/file/entity/file.entity';
+import { makeFileUrl } from 'src/common/helpers/common.function';
 
 const userDropdownListAttributes: (keyof User)[] = ['id', 'fullName', 'status'];
 const roleDropdownListAttributes: (keyof Role)[] = ['id', 'name'];
@@ -213,11 +215,22 @@ export class CommonDropdownService {
                             status: [],
                             withDeleted: false,
                         }),
+                    relations: ['category', 'foodImgFile'],
                 },
             );
             return {
                 totalItems,
-                items,
+                items: items.map((item) => {
+                    return {
+                        ...item,
+                        foodImg: item.foodImgFile
+                            ? {
+                                  ...item.foodImgFile,
+                                  url: makeFileUrl(item.foodImgFile.fileName),
+                              }
+                            : null,
+                    };
+                }),
             };
         } catch (error) {
             throw new InternalServerErrorException();

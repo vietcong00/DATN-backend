@@ -26,7 +26,6 @@ import { UserList } from '../dto/response/api-response.dto';
 import { UserResponseDto } from '../dto/response/user-response.dto';
 import { UpdateUserDto } from '../dto/requests/update-user.dto';
 import { UserStatusDto } from '../dto/requests/common-user.dto';
-import xlsx from 'xlsx';
 import { makeFileUrl } from 'src/common/helpers/common.function';
 
 @Injectable()

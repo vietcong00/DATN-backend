@@ -18,12 +18,10 @@ export class MobileService {
             const billing = await this.dbManager.findOne(Billing, {
                 where: {
                     tableId: tableId,
-                    BillingStatus: BillingStatus.EATING,
+                    billingStatus: BillingStatus.EATING,
                 },
             });
-            return {
-                billing,
-            };
+            return billing;
         } catch (error) {
             throw error;
         }
@@ -37,15 +35,15 @@ export class MobileService {
                     billingStatus: BillingStatus.EATING,
                 },
             });
-            const items = await this.dbManager.find(FoodBilling, {
-                where: { billingId: billing.id },
-            });
-            return {
-                items,
-            };
-            return {
-                billing,
-            };
+            if (billing) {
+                const items = await this.dbManager.find(FoodBilling, {
+                    where: { billingId: billing.id },
+                });
+                return {
+                    items,
+                };
+            }
+            return;
         } catch (error) {
             throw error;
         }

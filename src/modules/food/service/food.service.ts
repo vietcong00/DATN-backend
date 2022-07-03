@@ -21,6 +21,8 @@ import {
     CreateFoodDto,
     UpdateFoodDto,
 } from '../dto/food.dto';
+import { File } from 'src/modules/file/entity/file.entity';
+import { makeFileUrl } from 'src/common/helpers/common.function';
 
 const FoodAttribute: (keyof Food)[] = [
     'id',
@@ -76,13 +78,24 @@ export class FoodService {
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),
                     },
-                    relations: ['category'],
+                    relations: ['category', 'foodImgFile'],
                     take,
                     skip,
                 },
             );
+
             return {
-                items,
+                items: items.map((item) => {
+                    return {
+                        ...item,
+                        foodImg: item.foodImgFile
+                            ? {
+                                  ...item.foodImgFile,
+                                  url: makeFileUrl(item.foodImgFile.fileName),
+                              }
+                            : null,
+                    };
+                }),
                 totalItems,
             };
         } catch (error) {
@@ -96,6 +109,19 @@ export class FoodService {
                 select: FoodAttribute,
                 where: { id },
             });
+            if (food?.foodImgId) {
+                const file = await this.dbManager.findOne(File, {
+                    where: { id: food.foodImgId },
+                });
+                return {
+                    ...food,
+                    foodImg: {
+                        id: food.foodImgId.toString(),
+                        foodName: file.fileName,
+                        url: file.fileName ? makeFileUrl(file.fileName) : null,
+                    },
+                };
+            }
             return food;
         } catch (error) {
             throw error;

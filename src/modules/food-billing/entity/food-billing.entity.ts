@@ -25,19 +25,7 @@ export class FoodBilling extends BaseEntity {
     billing: Billing;
 
     @Column({ nullable: true })
-    selectedCount: number;
-
-    @Column({ nullable: true })
-    processingCount: number;
-
-    @Column({ nullable: true })
-    doneCount: number;
-
-    @Column({ nullable: true })
-    canceledCount: number;
-
-    @Column({ nullable: true })
-    reasonCanceled: ReasonCanceled;
+    quantity: number;
 
     @Column({ length: 2000, nullable: true })
     note: string;

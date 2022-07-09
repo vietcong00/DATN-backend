@@ -40,6 +40,7 @@ import {
 } from './dto/billing.dto';
 import { Billing } from './entity/billing.entity';
 import { BillingService } from './service/billing.service';
+import { BillingStatus } from './billing.constant';
 
 @Controller('billing')
 @UseGuards(JwtGuard, AuthorizationGuard)
@@ -105,6 +106,7 @@ export class BillingController {
     ) {
         try {
             body.createdBy = req.loginUser.id;
+            body.billingStatus = BillingStatus.WAIT_FOR_SELECT_FOOD;
             const newBilling = await this.billingService.createBilling(body);
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,

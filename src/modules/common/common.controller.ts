@@ -1,5 +1,4 @@
 import { FoodBillingService } from './../food-billing/service/food-billing.service';
-import { BookingService } from './../booking/services/booking.service';
 import {
     ErrorResponse,
     SuccessResponse,
@@ -14,7 +13,6 @@ import {
     Post,
     Param,
     ParseIntPipe,
-    Patch,
 } from '@nestjs/common';
 import { JoiValidationPipe } from '../../common/pipes/joi.validation.pipe';
 import { JwtGuard } from '../../common/guards/jwt.guard';
@@ -41,31 +39,24 @@ import {
     PermissionActions,
 } from 'src/modules/role/role.constants';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
-import { BookingStatus } from '../booking/booking.constant';
-import {
-    CreateBookingSchema,
-    CreateBookingDto,
-} from '../booking/dto/requests/create-booking.dto';
-import { DatabaseService } from 'src/common/services/database.service';
 import { MobileService } from './services/mobile.service';
 import {
-    CreateFoodBillingSchema,
-    CreateFoodBillingDto,
-    UpdateFoodBillingDto,
-    UpdateFoodBillingSchema,
+    CreateFoodBillingListSchema,
+    CreateFoodBillingListDto,
 } from '../food-billing/dto/food-billing.dto';
-import { FoodBilling } from '../food-billing/entity/food-billing.entity';
 import { HttpStatus } from 'src/common/constants';
+import { BillingService } from '../billing/service/billing.service';
+import { BillingStatus } from '../billing/billing.constant';
+import { I18nRequestScopeService } from 'nestjs-i18n';
 
 @Controller('common')
 export class CommonController {
-    i18n: any;
     constructor(
         private readonly commonDropdownService: CommonDropdownService,
-        private readonly bookingService: BookingService,
         private readonly mobileService: MobileService,
+        private readonly billingService: BillingService,
         private readonly foodBillingService: FoodBillingService,
-        private readonly databaseService: DatabaseService,
+        private readonly i18n: I18nRequestScopeService,
     ) {}
 
     @Get('/province')
@@ -161,20 +152,6 @@ export class CommonController {
         }
     }
 
-    @Post('booking')
-    async createBooking(
-        @Body(new TrimObjectPipe(), new JoiValidationPipe(CreateBookingSchema))
-        body: CreateBookingDto,
-    ) {
-        try {
-            body.status = BookingStatus.WAITING;
-            const newBooking = await this.bookingService.createBooking(body);
-            return new SuccessResponse(newBooking);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
     @Get('/food')
     async getFood(
         @Query(
@@ -193,12 +170,26 @@ export class CommonController {
     }
 
     @Get('/billing/table/:id')
-    async getBilling(@Param('id', ParseIntPipe) id: number) {
+    async getBillingRelativeTable(@Param('id', ParseIntPipe) id: number) {
         try {
-            const material = await this.mobileService.getBillingRelativeTable(
+            const oldBilling = await this.mobileService.getBillingDetail(
+                id,
+                BillingStatus.WAIT_FOR_SELECT_FOOD,
+            );
+            if (!oldBilling) {
+                const message = await this.i18n.translate(
+                    'common.error.billing.notFound',
+                );
+                return new ErrorResponse(
+                    HttpStatus.ITEM_NOT_FOUND,
+                    message,
+                    [],
+                );
+            }
+            const billing = await this.mobileService.getBillingRelativeTable(
                 id,
             );
-            if (!material) {
+            if (!billing) {
                 const message = await this.i18n.translate(
                     'material.message.materialNotFound',
                 );
@@ -208,70 +199,26 @@ export class CommonController {
                     [],
                 );
             }
-            return new SuccessResponse(material);
+            return new SuccessResponse(billing);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
     }
 
-    @Get('/food-billing')
-    async getFoodBilling(
-        @Query(
-            new RemoveEmptyQueryPipe(),
-            new JoiValidationPipe(queryDropdownSchema),
-        )
-        query: QueryDropdown,
-    ) {
-        try {
-            const data = await this.mobileService.getFoodBillingRelativeTable(
-                query.tableId,
-            );
-            return new SuccessResponse(data);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
-    @Post('/food-billing')
-    async createFoodBilling(
-        @Body(
-            new TrimObjectPipe(),
-            new JoiValidationPipe(CreateFoodBillingSchema),
-        )
-        body: CreateFoodBillingDto,
-    ) {
-        try {
-            body.processingCount = 0;
-            body.doneCount = 0;
-            body.canceledCount = 0;
-            const newFoodBilling =
-                await this.foodBillingService.createFoodBilling(body);
-            return new SuccessResponse(newFoodBilling);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
-    @Patch('food-billing/:id')
-    @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,
-    ])
-    async updateFoodBillingStatus(
+    @Post('billing/:id/food')
+    async prepareToPay(
         @Param('id', ParseIntPipe) id: number,
         @Body(
             new TrimObjectPipe(),
-            new JoiValidationPipe(UpdateFoodBillingSchema),
+            new JoiValidationPipe(CreateFoodBillingListSchema),
         )
-        body: UpdateFoodBillingDto,
+        body: CreateFoodBillingListDto,
     ) {
         try {
-            const oldFoodBilling = await this.databaseService.getDataById(
-                FoodBilling,
-                id,
-            );
-            if (!oldFoodBilling) {
+            const oldBilling = await this.billingService.getBillingDetail(id);
+            if (!oldBilling) {
                 const message = await this.i18n.translate(
-                    'material.message.materialNotFound',
+                    'common.error.billing.notFound',
                 );
                 return new ErrorResponse(
                     HttpStatus.ITEM_NOT_FOUND,
@@ -279,9 +226,14 @@ export class CommonController {
                     [],
                 );
             }
-            const material =
-                await this.foodBillingService.updateFoodBillingStatus(id, body);
-            return new SuccessResponse(material);
+            body.foodList.forEach((element) => {
+                delete element.updatedAt;
+            });
+            await this.foodBillingService.createFoodBillings(body);
+            const billing = await this.billingService.updateBillingStatus(id, {
+                billingStatus: BillingStatus.WAIT_FOR_PAY,
+            });
+            return new SuccessResponse(billing);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

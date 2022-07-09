@@ -131,8 +131,18 @@ export class BillingService {
 
     async updateBillingStatus(id: number, updateBilling: UpdateBillingDto) {
         try {
-            await this.dbManager.update(Billing, id, updateBilling);
+            const billing = await this.dbManager.update(
+                Billing,
+                id,
+                updateBilling,
+            );
+
             const savedMaterial = await this.getBillingDetail(id);
+            console.log('---------------');
+            console.log('---------------');
+            console.log(savedMaterial);
+            console.log('---------------');
+            console.log('---------------');
             return savedMaterial;
         } catch (error) {
             throw error;

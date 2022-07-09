@@ -13,12 +13,13 @@ import {
     DEFAULT_ORDER_BY,
     ORDER_DIRECTION,
 } from 'src/common/constants';
-import { EntityManager, Brackets, Like } from 'typeorm';
+import { EntityManager, Brackets, Like, getConnection } from 'typeorm';
 import {
     FoodBillingQueryStringDto,
     FoodBillingDetailResponseDto,
     CreateFoodBillingDto,
     UpdateFoodBillingDto,
+    CreateFoodBillingListDto,
 } from '../dto/food-billing.dto';
 import { FoodBilling } from '../entity/food-billing.entity';
 
@@ -27,10 +28,7 @@ const FoodBillingAttribute: (keyof FoodBilling)[] = [
     'foodId',
     'food',
     'note',
-    'selectedCount',
-    'processingCount',
-    'canceledCount',
-    'doneCount',
+    'quantity',
     'createdAt',
     'updatedAt',
 ];
@@ -123,21 +121,14 @@ export class FoodBillingService {
         }
     }
 
-    async createFoodBilling(
-        foodBilling: CreateFoodBillingDto,
-    ): Promise<FoodBillingDetailResponseDto> {
+    async createFoodBillings(foodBillings: CreateFoodBillingListDto) {
         try {
-            const insertedMaterial = await this.dbManager
-                .getRepository(FoodBilling)
-                .insert(foodBilling);
-            const foodBillingId = insertedMaterial?.identifiers[0]?.id;
-            if (foodBillingId) {
-                const foodBillingDetail = await this.getFoodBillingDetail(
-                    foodBillingId,
-                );
-                return foodBillingDetail;
-            }
-            throw new InternalServerErrorException();
+            await getConnection()
+                .createQueryBuilder()
+                .insert()
+                .into(FoodBilling)
+                .values(foodBillings.foodList)
+                .execute();
         } catch (error) {
             throw error;
         }

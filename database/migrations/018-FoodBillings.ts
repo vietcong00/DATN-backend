@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
 import { ReasonCanceled } from '../../src/modules/food-billing/food-billing.constant';
 
-export class FoodBooking1632891593051 implements MigrationInterface {
+export class FoodBilling1632891593051 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
@@ -26,29 +26,8 @@ export class FoodBooking1632891593051 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
-                        name: 'selectedCount',
+                        name: 'quantity',
                         type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'processingCount',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'doneCount',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'canceledCount',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'reasonCanceled',
-                        type: 'enum',
-                        enum: Object.values(ReasonCanceled),
                         isNullable: true,
                     },
                     {

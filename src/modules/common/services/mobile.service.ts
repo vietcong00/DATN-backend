@@ -5,6 +5,7 @@ import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 
 import { Billing } from 'src/modules/billing/entity/billing.entity';
+import { BillingDetailResponseDto } from 'src/modules/billing/dto/billing.dto';
 
 @Injectable()
 export class MobileService {
@@ -15,12 +16,21 @@ export class MobileService {
 
     async getBillingRelativeTable(tableId: number) {
         try {
-            const billing = await this.dbManager.findOne(Billing, {
-                where: {
+            await this.dbManager.update(
+                Billing,
+                {
                     tableId: tableId,
+                    billingStatus: BillingStatus.WAIT_FOR_SELECT_FOOD,
+                },
+                {
                     billingStatus: BillingStatus.EATING,
                 },
-            });
+            );
+            const billing = await this.getBillingDetail(
+                tableId,
+                BillingStatus.EATING,
+            );
+
             return billing;
         } catch (error) {
             throw error;
@@ -57,6 +67,20 @@ export class MobileService {
             return {
                 items,
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBillingDetail(
+        tableId: number,
+        billingStatus: BillingStatus,
+    ): Promise<BillingDetailResponseDto> {
+        try {
+            const billing = await this.dbManager.findOne(Billing, {
+                where: { tableId, billingStatus },
+            });
+            return billing;
         } catch (error) {
             throw error;
         }

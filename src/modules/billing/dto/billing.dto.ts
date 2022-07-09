@@ -101,17 +101,17 @@ export class CreateBillingDto {
 }
 
 export class UpdateBillingDto {
-    customerName: string;
-    customerPhone: string;
-    tableId: number;
-    cashierId: number;
-    paymentTotal: number;
-    paymentMethod: PaymentMethod;
-    paymentTime: Date;
-    arrivalTime: Date;
-    billingStatus: BillingStatus;
-    reasonCanceled: ReasonCanceled;
-    note: string;
+    customerName?: string;
+    customerPhone?: string;
+    tableId?: number;
+    cashierId?: number;
+    paymentTotal?: number;
+    paymentMethod?: PaymentMethod;
+    paymentTime?: Date;
+    arrivalTime?: Date;
+    billingStatus?: BillingStatus;
+    reasonCanceled?: ReasonCanceled;
+    note?: string;
     updatedBy?: number;
 }
 

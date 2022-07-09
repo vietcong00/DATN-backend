@@ -5,6 +5,7 @@ export enum OrderBy {
 }
 
 export enum BillingStatus {
+    WAIT_FOR_SELECT_FOOD = 'wait_for_select_food',
     EATING = 'eating',
     WAIT_FOR_PAY = 'wait_for_pay',
     CANCELED = 'canceled',

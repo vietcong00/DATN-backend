@@ -95,33 +95,33 @@ export class FoodBillingController {
         }
     }
 
-    @Post()
-    @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
-    ])
-    async createFoodBilling(
-        @Request() req,
-        @Body(
-            new TrimObjectPipe(),
-            new JoiValidationPipe(CreateFoodBillingSchema),
-        )
-        body: CreateFoodBillingDto,
-    ) {
-        try {
-            body.createdBy = req.loginUser.id;
-            const newFoodBilling =
-                await this.foodBillingService.createFoodBilling(body);
-            await this.databaseService.recordUserLogging({
-                userId: req.loginUser?.id,
-                route: req.route,
-                oldValue: {},
-                newValue: { ...newFoodBilling },
-            });
-            return new SuccessResponse(newFoodBilling);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
+    // @Post()
+    // @Permissions([
+    //     `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
+    // ])
+    // async createFoodBilling(
+    //     @Request() req,
+    //     @Body(
+    //         new TrimObjectPipe(),
+    //         new JoiValidationPipe(CreateFoodBillingSchema),
+    //     )
+    //     body: CreateFoodBillingDto,
+    // ) {
+    //     try {
+    //         body.createdBy = req.loginUser.id;
+    //         const newFoodBilling =
+    //             await this.foodBillingService.createFoodBilling(body);
+    //         await this.databaseService.recordUserLogging({
+    //             userId: req.loginUser?.id,
+    //             route: req.route,
+    //             oldValue: {},
+    //             newValue: { ...newFoodBilling },
+    //         });
+    //         return new SuccessResponse(newFoodBilling);
+    //     } catch (error) {
+    //         throw new InternalServerErrorException(error);
+    //     }
+    // }
 
     @Patch(':id')
     @Permissions([

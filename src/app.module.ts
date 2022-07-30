@@ -15,7 +15,7 @@ import { BookingModule } from './modules/booking/booking.module';
 import { TableDiagramModule } from './modules/table-diagram/tableDiagram.module';
 import { CategoryModule } from './modules/category/category.module';
 import { FoodModule } from './modules/food/food.module';
-import { ClosingRevenueModule } from './modules/closing-revenue/closing_revenue.module';
+import { ReportRevenueModule } from './modules/report-revenue/report_revenue.module';
 import { FoodBillingModule } from './modules/food-billing/food-billing.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { FileModule } from './modules/file/file.module';
@@ -39,7 +39,7 @@ import { FileModule } from './modules/file/file.module';
         TableDiagramModule,
         CategoryModule,
         FoodModule,
-        ClosingRevenueModule,
+        ReportRevenueModule,
         FoodBillingModule,
         BillingModule,
         FileModule,

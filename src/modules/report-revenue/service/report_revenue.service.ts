@@ -10,13 +10,13 @@ import {
 } from 'src/common/constants';
 import { EntityManager, Brackets, Like } from 'typeorm';
 import {
-    ClosingRevenueQueryStringDto,
-    ClosingRevenueDetailResponseDto,
-    UpdateClosingRevenueDto,
-} from '../dto/closing_revenue.dto';
-import { ClosingRevenue } from '../entity/closing_revenue.entity';
+    ReportRevenueQueryStringDto,
+    ReportRevenueDetailResponseDto,
+    UpdateReportRevenueDto,
+} from '../dto/report_revenue.dto';
+import { ReportRevenue } from '../entity/report_revenue.entity';
 
-const ClosingRevenueAttribute: (keyof ClosingRevenue)[] = [
+const ReportRevenueAttribute: (keyof ReportRevenue)[] = [
     'id',
     'shift',
     'shiftLeaderId',
@@ -31,7 +31,7 @@ const ClosingRevenueAttribute: (keyof ClosingRevenue)[] = [
 ];
 
 @Injectable()
-export class ClosingRevenueService {
+export class ReportRevenueService {
     constructor(
         @Optional() @Inject(REQUEST) private readonly request: Request,
         @InjectEntityManager()
@@ -53,7 +53,7 @@ export class ClosingRevenueService {
         }
     }
 
-    async getClosingRevenueList(query: ClosingRevenueQueryStringDto) {
+    async getReportRevenueList(query: ReportRevenueQueryStringDto) {
         try {
             const {
                 keyword = '',
@@ -65,9 +65,9 @@ export class ClosingRevenueService {
             const take = +limit || DEFAULT_LIMIT_FOR_PAGINATION;
             const skip = (+page - 1) * take || 0;
             const [items, totalItems] = await this.dbManager.findAndCount(
-                ClosingRevenue,
+                ReportRevenue,
                 {
-                    select: ClosingRevenueAttribute,
+                    select: ReportRevenueAttribute,
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
@@ -89,34 +89,27 @@ export class ClosingRevenueService {
         }
     }
 
-    async getClosingRevenueDetail(
+    async getReportRevenueDetail(
         id: number,
-    ): Promise<ClosingRevenueDetailResponseDto> {
+    ): Promise<ReportRevenueDetailResponseDto> {
         try {
-            const checkInventory = await this.dbManager.findOne(
-                ClosingRevenue,
-                {
-                    select: ClosingRevenueAttribute,
-                    where: { id },
-                },
-            );
+            const checkInventory = await this.dbManager.findOne(ReportRevenue, {
+                select: ReportRevenueAttribute,
+                where: { id },
+            });
             return checkInventory;
         } catch (error) {
             throw error;
         }
     }
 
-    async updateClosingRevenueStatus(
+    async updateReportRevenueStatus(
         id: number,
-        updateClosingRevenue: UpdateClosingRevenueDto,
+        updateReportRevenue: UpdateReportRevenueDto,
     ) {
         try {
-            await this.dbManager.update(
-                ClosingRevenue,
-                id,
-                updateClosingRevenue,
-            );
-            const savedMaterial = await this.getClosingRevenueDetail(id);
+            await this.dbManager.update(ReportRevenue, id, updateReportRevenue);
+            const savedMaterial = await this.getReportRevenueDetail(id);
             return savedMaterial;
         } catch (error) {
             throw error;

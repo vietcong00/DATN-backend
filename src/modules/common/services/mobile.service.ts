@@ -78,7 +78,11 @@ export class MobileService {
     ): Promise<BillingDetailResponseDto> {
         try {
             const billing = await this.dbManager.findOne(Billing, {
-                where: { tableId, billingStatus },
+                relations: ['table'],
+                where: {
+                    tableId: tableId,
+                    billingStatus: billingStatus,
+                },
             });
             return billing;
         } catch (error) {

@@ -53,7 +53,7 @@ export class BillingController {
 
     @Get()
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
     async getBillings(
         @Query(
@@ -74,7 +74,7 @@ export class BillingController {
 
     @Get(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
     async getBilling(@Param('id', ParseIntPipe) id: number) {
         try {
@@ -97,7 +97,7 @@ export class BillingController {
 
     @Post()
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.CREATE}`,
     ])
     async createBilling(
         @Request() req,
@@ -122,7 +122,7 @@ export class BillingController {
 
     @Patch(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.UPDATE}`,
     ])
     async updateBillingStatus(
         @Request() req,

@@ -1,4 +1,4 @@
-import { SHIFT } from './../closing_revenue.constant';
+import { SHIFT } from '../report_revenue.constant';
 import { MAX_INTEGER } from '../../../common/constants';
 import * as BaseJoi from 'joi';
 import JoiDate from '@joi/date';
@@ -11,9 +11,9 @@ import {
     MIN_PAGE_SIZE,
     ORDER_DIRECTION,
 } from 'src/common/constants';
-import { OrderBy } from '../closing_revenue.constant';
+import { OrderBy } from '../report_revenue.constant';
 
-export const ClosingRevenueListQueryStringSchema = Joi.object().keys({
+export const ReportRevenueListQueryStringSchema = Joi.object().keys({
     page: Joi.number().min(MIN_PAGE).max(MAX_PAGE).optional(),
     limit: Joi.number().min(MIN_PAGE_SIZE).max(MAX_PAGE_SIZE).optional(),
     keyword: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional().allow(null, ''),
@@ -27,7 +27,7 @@ export const ClosingRevenueListQueryStringSchema = Joi.object().keys({
         .allow(null, ''),
 });
 
-export const ClosingRevenueSchema = {
+export const ReportRevenueSchema = {
     shift: Joi.string()
         .valid(...Object.values(SHIFT))
         .optional()
@@ -47,15 +47,15 @@ export const ClosingRevenueSchema = {
     note: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional().allow(null, ''),
 };
 
-export const CreateClosingRevenueSchema = Joi.object().keys({
-    ...ClosingRevenueSchema,
+export const CreateReportRevenueSchema = Joi.object().keys({
+    ...ReportRevenueSchema,
 });
 
-export const UpdateClosingRevenueSchema = Joi.object().keys({
-    ...ClosingRevenueSchema,
+export const UpdateReportRevenueSchema = Joi.object().keys({
+    ...ReportRevenueSchema,
 });
 
-export class ClosingRevenueQueryStringDto {
+export class ReportRevenueQueryStringDto {
     page?: number;
     limit?: number;
     keyword?: string;
@@ -63,13 +63,13 @@ export class ClosingRevenueQueryStringDto {
     orderDirection?: ORDER_DIRECTION;
 }
 
-export class CreateClosingRevenueDto {
+export class CreateReportRevenueDto {
     shift: SHIFT;
     billingRevenue: number;
     createdBy?: number;
 }
 
-export class UpdateClosingRevenueDto {
+export class UpdateReportRevenueDto {
     shift: SHIFT;
     shiftLeaderId: number;
     cashAtBeginningOfShift: number;
@@ -80,7 +80,7 @@ export class UpdateClosingRevenueDto {
     updatedBy?: number;
 }
 
-export class ClosingRevenueDetailResponseDto {
+export class ReportRevenueDetailResponseDto {
     id: number;
     shift: SHIFT;
     shiftLeaderId: number;

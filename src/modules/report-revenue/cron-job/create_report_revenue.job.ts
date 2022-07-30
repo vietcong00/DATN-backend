@@ -1,5 +1,5 @@
-import { ClosingRevenue } from './../entity/closing_revenue.entity';
-import { SHIFT } from './../closing_revenue.constant';
+import { ReportRevenue } from '../entity/report_revenue.entity';
+import { SHIFT } from '../report_revenue.constant';
 import { Billing } from 'src/modules/billing/entity/billing.entity';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -9,7 +9,7 @@ import * as dotenv from 'dotenv';
 import { TIMEZONE_NAME_DEFAULT } from 'src/common/constants';
 import { createWinstonLogger } from 'src/common/services/winston.service';
 import { Brackets, getManager } from 'typeorm';
-import { MODULE_NAME } from '../closing_revenue.constant';
+import { MODULE_NAME } from '../report_revenue.constant';
 import { BillingStatus } from 'src/modules/billing/billing.constant';
 
 dotenv.config();
@@ -19,18 +19,18 @@ const CRON_JOB_BOOKING_UPDATE_STATUS =
 
 //Change contract status from active to inactive if this contract outdate
 @Injectable()
-export class CreateClosingRevenueJob {
+export class CreateReportRevenueJob {
     constructor(private readonly configService: ConfigService) {
         // eslint-disable-next-line prettier/prettier
     }
     private readonly logger = createWinstonLogger(
-        `${MODULE_NAME}-create-closing-revenue-job`,
+        `${MODULE_NAME}-create-report-revenue-job`,
         this.configService,
     );
 
     idTableWaitings: number[] = [];
 
-    async createClosingRevenue() {
+    async createReportRevenue() {
         try {
             const now = new Date();
             const manager = getManager();
@@ -62,16 +62,16 @@ export class CreateClosingRevenueJob {
                 totalPayment += element.paymentTotal;
             });
 
-            const insertedClosingRevenue = await manager.save(ClosingRevenue, {
+            const insertedReportRevenue = await manager.save(ReportRevenue, {
                 shift,
                 billingRevenue: totalPayment,
             });
 
-            if (!insertedClosingRevenue) {
-                this.createClosingRevenue();
+            if (!insertedReportRevenue) {
+                this.createReportRevenue();
             }
         } catch (error) {
-            this.logger.error('Error in CreateClosingRevenueJob func: ', error);
+            this.logger.error('Error in CreateReportRevenueJob func: ', error);
         }
     }
 
@@ -94,10 +94,10 @@ export class CreateClosingRevenueJob {
     })
     async handleCron() {
         try {
-            this.logger.info('start CreateClosingRevenueJob at', new Date());
-            this.createClosingRevenue();
+            this.logger.info('start CreateReportRevenueJob at', new Date());
+            this.createReportRevenue();
         } catch (error) {
-            this.logger.error('Error in CreateClosingRevenueJob: ', error);
+            this.logger.error('Error in CreateReportRevenueJob: ', error);
         }
     }
 }

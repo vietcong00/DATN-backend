@@ -1,10 +1,10 @@
-import { SHIFT } from './../closing_revenue.constant';
+import { SHIFT } from '../report_revenue.constant';
 import { User } from 'src/modules/user/entity/user.entity';
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/BaseEntity';
 
-@Entity({ name: 'closing_revenues' })
-export class ClosingRevenue extends BaseEntity {
+@Entity({ name: 'report_revenues' })
+export class ReportRevenue extends BaseEntity {
     @Column({ nullable: true })
     shift: SHIFT;
 

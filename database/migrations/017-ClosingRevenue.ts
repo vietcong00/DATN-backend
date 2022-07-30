@@ -1,12 +1,12 @@
-import { SHIFT } from '../../src/modules/closing-revenue/closing_revenue.constant';
+import { SHIFT } from '../../src/modules/report-revenue/report_revenue.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
 
-export class ClosingRevenue1632891593050 implements MigrationInterface {
+export class ReportRevenue1632891593050 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: TABLE_NAME.ClosingRevenues,
+                name: TABLE_NAME.ReportRevenues,
                 columns: [
                     {
                         name: 'id',
@@ -93,6 +93,6 @@ export class ClosingRevenue1632891593050 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable(TABLE_NAME.ClosingRevenues);
+        await queryRunner.dropTable(TABLE_NAME.ReportRevenues);
     }
 }

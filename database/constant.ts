@@ -28,7 +28,7 @@ export enum TABLE_NAME {
     Categories = 'categories',
     Foods = 'foods',
     TablesRestaurants = 'tables_restaurants',
-    ClosingRevenues = 'closing_revenues',
+    ReportRevenues = 'report_revenues',
     FoodBillings = 'food_billings',
 }
 
@@ -91,6 +91,6 @@ export enum DBPermissionResources {
     MENU_FOOD = 'food',
     MENU_CATEGORY = 'category',
     BILLING = 'billing',
-    CLOSING_REVENUE = 'closing_revenue',
+    REPORT_REVENUE = 'report_revenue',
     ROLE = 'role',
 }

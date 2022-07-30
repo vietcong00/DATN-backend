@@ -19,6 +19,7 @@ export enum BillingOrderBy {
 
 export enum BookingStatus {
     WAITING = 'waiting',
+    WAITING_FOR_APPROVE = 'waiting_for_approve',
     CANCELED = 'canceled',
     DONE = 'done',
 }

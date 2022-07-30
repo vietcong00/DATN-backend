@@ -1,4 +1,4 @@
-export const MODULE_NAME = 'closing-revenue';
+export const MODULE_NAME = 'report-revenue';
 
 export enum OrderBy {
     CREATED_AT = 'createdAt',

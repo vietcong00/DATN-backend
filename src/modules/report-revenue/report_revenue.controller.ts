@@ -31,39 +31,39 @@ import { HttpStatus } from 'src/common/constants';
 import { RemoveEmptyQueryPipe } from 'src/common/pipes/remove.empty.query.pipe';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
 import {
-    CreateClosingRevenueDto,
-    CreateClosingRevenueSchema,
-    ClosingRevenueListQueryStringSchema,
-    ClosingRevenueQueryStringDto,
-    UpdateClosingRevenueDto,
-    UpdateClosingRevenueSchema,
-} from './dto/closing_revenue.dto';
-import { ClosingRevenue } from './entity/closing_revenue.entity';
-import { ClosingRevenueService } from './service/closing_revenue.service';
+    CreateReportRevenueDto,
+    CreateReportRevenueSchema,
+    ReportRevenueListQueryStringSchema,
+    ReportRevenueQueryStringDto,
+    UpdateReportRevenueDto,
+    UpdateReportRevenueSchema,
+} from './dto/report_revenue.dto';
+import { ReportRevenue } from './entity/report_revenue.entity';
+import { ReportRevenueService } from './service/report_revenue.service';
 
-@Controller('closing-revenue')
+@Controller('report-revenue')
 @UseGuards(JwtGuard, AuthorizationGuard)
-export class ClosingRevenueController {
+export class ReportRevenueController {
     constructor(
-        private readonly closingRevenueService: ClosingRevenueService,
+        private readonly reportRevenueService: ReportRevenueService,
         private readonly i18n: I18nRequestScopeService,
         private readonly databaseService: DatabaseService,
     ) {}
 
     @Get()
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getExportClosingRevenues(
+    async getExportReportRevenues(
         @Query(
             new RemoveEmptyQueryPipe(),
-            new JoiValidationPipe(ClosingRevenueListQueryStringSchema),
+            new JoiValidationPipe(ReportRevenueListQueryStringSchema),
         )
-        query: ClosingRevenueQueryStringDto,
+        query: ReportRevenueQueryStringDto,
     ) {
         try {
             const materialList =
-                await this.closingRevenueService.getClosingRevenueList(query);
+                await this.reportRevenueService.getReportRevenueList(query);
             return new SuccessResponse(materialList);
         } catch (error) {
             throw new InternalServerErrorException(error);
@@ -72,12 +72,12 @@ export class ClosingRevenueController {
 
     @Get(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
-    async getClosingRevenue(@Param('id', ParseIntPipe) id: number) {
+    async getReportRevenue(@Param('id', ParseIntPipe) id: number) {
         try {
             const material =
-                await this.closingRevenueService.getClosingRevenueDetail(id);
+                await this.reportRevenueService.getReportRevenueDetail(id);
             if (!material) {
                 const message = await this.i18n.translate(
                     'material.message.materialNotFound',
@@ -96,23 +96,23 @@ export class ClosingRevenueController {
 
     @Patch(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.UPDATE}`,
     ])
-    async updateClosingRevenueStatus(
+    async updateReportRevenueStatus(
         @Request() req,
         @Param('id', ParseIntPipe) id: number,
         @Body(
             new TrimObjectPipe(),
-            new JoiValidationPipe(UpdateClosingRevenueSchema),
+            new JoiValidationPipe(UpdateReportRevenueSchema),
         )
-        body: UpdateClosingRevenueDto,
+        body: UpdateReportRevenueDto,
     ) {
         try {
-            const oldClosingRevenue = await this.databaseService.getDataById(
-                ClosingRevenue,
+            const oldReportRevenue = await this.databaseService.getDataById(
+                ReportRevenue,
                 id,
             );
-            if (!oldClosingRevenue) {
+            if (!oldReportRevenue) {
                 const message = await this.i18n.translate(
                     'material.message.materialNotFound',
                 );
@@ -123,18 +123,18 @@ export class ClosingRevenueController {
                 );
             }
             const material =
-                await this.closingRevenueService.updateClosingRevenueStatus(
+                await this.reportRevenueService.updateReportRevenueStatus(
                     id,
                     body,
                 );
             const newValue = await this.databaseService.getDataById(
-                ClosingRevenue,
+                ReportRevenue,
                 id,
             );
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,
                 route: req.route,
-                oldValue: { ...oldClosingRevenue },
+                oldValue: { ...oldReportRevenue },
                 newValue: { ...newValue },
             });
             return new SuccessResponse(material);

@@ -52,7 +52,7 @@ export class FoodBillingController {
 
     @Get()
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
     async getFoodBillings(
         @Query(
@@ -72,7 +72,7 @@ export class FoodBillingController {
 
     @Get(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.READ}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.READ}`,
     ])
     async getFoodBilling(@Param('id', ParseIntPipe) id: number) {
         try {
@@ -97,7 +97,7 @@ export class FoodBillingController {
 
     // @Post()
     // @Permissions([
-    //     `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.CREATE}`,
+    //     `${PermissionResources.REPORT_REVENUE}_${PermissionActions.CREATE}`,
     // ])
     // async createFoodBilling(
     //     @Request() req,
@@ -125,7 +125,7 @@ export class FoodBillingController {
 
     @Patch(':id')
     @Permissions([
-        `${PermissionResources.CLOSING_REVENUE}_${PermissionActions.UPDATE}`,
+        `${PermissionResources.REPORT_REVENUE}_${PermissionActions.UPDATE}`,
     ])
     async updateFoodBillingStatus(
         @Request() req,

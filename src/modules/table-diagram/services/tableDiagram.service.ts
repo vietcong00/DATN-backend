@@ -12,6 +12,7 @@ import {
 import { Brackets, EntityManager, In, Like } from 'typeorm';
 import { TablesRestaurant } from '../entity/tablesRestaurant.entity';
 import { TableListQueryStringDto } from '../dto/requests/list-tablesRestaurant.dto';
+import { Booking } from 'src/modules/booking/entity/booking.entity';
 
 const tableAttributes: (keyof TablesRestaurant)[] = [
     'id',
@@ -24,7 +25,7 @@ const tableAttributes: (keyof TablesRestaurant)[] = [
 export class TableDiagramService {
     constructor(private readonly dbManager: EntityManager) {}
 
-    generateQueryBuilder(queryBuilder, { keyword, arrivalTimeRange }) {
+    generateQueryBuilder(queryBuilder, { keyword, arrivalTimeRange, floor }) {
         if (keyword) {
             const likeKeyword = `%${keyword}%`;
             queryBuilder.andWhere(
@@ -51,6 +52,18 @@ export class TableDiagramService {
                 }),
             );
         }
+
+        if (floor) {
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    qb.where([
+                        {
+                            floor,
+                        },
+                    ]);
+                }),
+            );
+        }
     }
 
     async getTableList(query: TableListQueryStringDto) {
@@ -59,6 +72,7 @@ export class TableDiagramService {
                 page = DEFAULT_FIRST_PAGE,
                 limit = DEFAULT_LIMIT_FOR_PAGINATION,
                 keyword = '',
+                floor = '',
                 orderBy = DEFAULT_ORDER_BY,
                 orderDirection = DEFAULT_ORDER_DIRECTION,
                 arrivalTimeRange = [],
@@ -76,6 +90,7 @@ export class TableDiagramService {
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
                             arrivalTimeRange,
+                            floor,
                         }),
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),
@@ -84,9 +99,29 @@ export class TableDiagramService {
                     skip,
                 },
             );
+            const bookings = await this.dbManager.find(Booking, {
+                select: ['id', 'tableId'],
+                where: {
+                    status: In([
+                        BookingStatus.WAITING,
+                        BookingStatus.WAITING_FOR_APPROVE,
+                    ]),
+                },
+            });
+
+            const userListResponse = items.map((table) => {
+                const bookingOfTables = bookings.filter(
+                    (item) => item.tableId === table.id,
+                );
+
+                return {
+                    ...table,
+                    bookingCount: bookingOfTables.length,
+                };
+            });
 
             return {
-                items,
+                items: userListResponse,
                 totalItems,
             };
         } catch (error) {
@@ -135,29 +170,29 @@ export class TableDiagramService {
     }
 
     async updateStatusTableRelativeBooking(
-        idTable: number,
+        tableId: number,
         bookingStatus: BookingStatus,
         isExistBookingWaiting: boolean,
     ) {
         try {
             if (bookingStatus === BookingStatus.CANCELED) {
                 if (isExistBookingWaiting) {
-                    this.updateTable(idTable, {
+                    this.updateTable(tableId, {
                         status: TableStatus.BOOKED,
                     });
                 } else {
-                    this.updateTable(idTable, {
+                    this.updateTable(tableId, {
                         status: TableStatus.READY,
                     });
                 }
             } else if (bookingStatus === BookingStatus.DONE) {
-                this.updateTable(idTable, {
+                this.updateTable(tableId, {
                     status: TableStatus.USED,
                 });
             } else if (bookingStatus === BookingStatus.WAITING) {
-                const table = await this.getTableDetail(idTable);
+                const table = await this.getTableDetail(tableId);
                 if (table?.status === TableStatus.READY) {
-                    this.updateTable(idTable, {
+                    this.updateTable(tableId, {
                         status: TableStatus.BOOKED,
                     });
                 }

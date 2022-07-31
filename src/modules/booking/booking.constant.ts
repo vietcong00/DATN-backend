@@ -49,10 +49,10 @@ export const BookingSchema = {
         .max(INPUT_PHONE_MAX_LENGTH)
         .optional()
         .label('booking.fields.phone'),
-    idTable: Joi.number()
+    tableId: Joi.number()
         .positive()
         .max(MAX_INTEGER)
-        .label('booking.fields.idTable'),
+        .label('booking.fields.tableId'),
     arrivalTime: Joi.date()
         .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON)
         .label('booking.fields.arrivalTime'),

@@ -19,6 +19,7 @@ import {
     PermissionActions,
     PermissionResources,
 } from 'src/modules/role/role.constants';
+import moment from 'moment';
 
 export function generateHashToken(userId: number): string {
     const random = Math.floor(Math.random() * (10000 - 1000) + 1000);
@@ -105,4 +106,10 @@ export function appendPermissionToRole(role: Role) {
             id: permission.id,
         } as Permission;
     });
+}
+
+export function calculateDuration(loginAt: string, logoutAt: string): number {
+    const date1 = moment(loginAt);
+    const date2 = moment(logoutAt);
+    return date2.diff(date1, 'seconds');
 }

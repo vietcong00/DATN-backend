@@ -1,3 +1,4 @@
+import { FloorRestaurant } from './../tableDiagram.constant';
 import { TableStatus } from '../tableDiagram.constant';
 import {
     Column,
@@ -29,4 +30,11 @@ export class TablesRestaurant extends BaseEntity {
 
     @Column({ nullable: true })
     numberSeat: number;
+
+    @Column({
+        type: 'enum',
+        enum: FloorRestaurant,
+        nullable: true,
+    })
+    floor: FloorRestaurant;
 }

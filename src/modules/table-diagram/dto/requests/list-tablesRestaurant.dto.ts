@@ -1,3 +1,4 @@
+import { FloorRestaurant } from './../../tableDiagram.constant';
 import * as BaseJoi from 'joi';
 import JoiDate from '@joi/date';
 const Joi = BaseJoi.extend(JoiDate);
@@ -34,6 +35,11 @@ export const TableListQueryStringSchema = Joi.object().keys({
         .length(2)
         .allow('')
         .label('billing.fields.payDate'),
+    floor: Joi.string()
+        .allow(null)
+        .valid(...Object.values(FloorRestaurant))
+        .optional()
+        .label('booking.fields.status'),
 });
 
 export interface TableListQueryStringDto {
@@ -43,4 +49,5 @@ export interface TableListQueryStringDto {
     orderBy?: string;
     orderDirection?: ORDER_DIRECTION;
     arrivalTimeRange?: Date;
+    floor?: FloorRestaurant;
 }

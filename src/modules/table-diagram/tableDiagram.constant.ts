@@ -21,6 +21,12 @@ export enum TableStatus {
     READY = 'ready',
 }
 
+export enum FloorRestaurant {
+    FIRST = 'first',
+    SECOND = 'second',
+    THIRD = 'third',
+}
+
 export const TableSchema = {
     name: Joi.string().max(INPUT_TEXT_MAX_LENGTH).label('billing.fields.name'),
     status: Joi.string()
@@ -44,4 +50,9 @@ export const TableSchema = {
         .positive()
         .max(MAX_INTEGER)
         .label('user.fields.role'),
+    floor: Joi.string()
+        .allow(null)
+        .valid(...Object.values(FloorRestaurant))
+        .optional()
+        .label('booking.fields.status'),
 };

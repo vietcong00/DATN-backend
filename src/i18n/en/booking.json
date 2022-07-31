@@ -3,7 +3,7 @@
         "status": "Status",
         "nameCustomer": "Name Customer",
         "phone": "Phone",
-        "idTable": "id Table",
+        "tableId": "id Table",
         "arrivalTime": "arrival Time",
         "numberPeople": "number People"            
     },

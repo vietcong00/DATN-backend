@@ -1,3 +1,4 @@
+import { FloorRestaurant } from './../../src/modules/table-diagram/tableDiagram.constant';
 import { TableStatus } from '../../src/modules/booking/booking.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
@@ -25,6 +26,12 @@ export class Booking1632891593033 implements MigrationInterface {
                         name: 'status',
                         type: 'enum',
                         enum: Object.values(TableStatus),
+                        isNullable: true,
+                    },
+                    {
+                        name: 'floor',
+                        type: 'enum',
+                        enum: Object.values(FloorRestaurant),
                         isNullable: true,
                     },
                     {

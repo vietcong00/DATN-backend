@@ -42,7 +42,7 @@ export const BookingListQueryStringSchema = Joi.object().keys({
         .length(2)
         .allow('')
         .label('billing.fields.payDate'),
-    idTable: Joi.number().allow(null, '').optional(),
+    tableId: Joi.number().allow(null, '').optional(),
 });
 
 export interface BookingListQueryStringDto {
@@ -53,5 +53,5 @@ export interface BookingListQueryStringDto {
     orderDirection?: ORDER_DIRECTION;
     status?: BookingStatus[];
     arrivalTimeRange?: Date;
-    idTable?: number;
+    tableId?: number;
 }

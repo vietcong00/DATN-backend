@@ -149,10 +149,10 @@ export class BookingController {
             );
             const isExistBookingWaiting =
                 await this.bookingService.checkExistBookingWaitingInTable(
-                    updatedBooking.idTable,
+                    updatedBooking.tableId,
                 );
             this.tableDiagramService.updateStatusTableRelativeBooking(
-                updatedBooking.idTable,
+                updatedBooking.tableId,
                 updatedBooking.status,
                 isExistBookingWaiting,
             );

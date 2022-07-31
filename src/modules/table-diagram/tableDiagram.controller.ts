@@ -149,6 +149,15 @@ export class TableDiagramController {
                     [],
                 );
             }
+
+            if (
+                !(await this.bookingService.checkCanSetupTable(new Date(), id))
+            ) {
+                const message = await this.i18n.translate(
+                    'table.message.error.conflictTime',
+                );
+                return new ErrorResponse(HttpStatus.ITEM_IS_USING, message, []);
+            }
             body.updatedBy = req.loginUser.id;
             const isExistBookingWaiting =
                 await this.bookingService.checkExistBookingWaitingInTable(id);

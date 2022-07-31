@@ -112,6 +112,8 @@ export const TIMEZONE_NAME_DEFAULT = 'Asia/Bangkok';
 
 export const MAX_INTEGER = 4294967295;
 
+export const BLOCK_TIME_BOOKING = 3600;
+
 export enum HttpStatus {
     OK = 200,
     BAD_REQUEST = 400,

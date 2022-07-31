@@ -28,7 +28,6 @@ export const usersAttributes: (keyof User)[] = [
     'gender',
     'role',
     'status',
-    'idCardIssuePlace',
     'isSuperAdmin',
 ];
 

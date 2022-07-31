@@ -56,15 +56,14 @@ export class User1632891593011 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
-                        name: 'hometownAddress',
-                        type: 'varchar',
-                        length: '2000',
-                        isNullable: true,
-                    },
-                    {
                         name: 'gender',
                         type: 'enum',
                         enum: Object.values(UserGender),
+                        isNullable: true,
+                    },
+                    {
+                        name: 'provinceId',
+                        type: 'int',
                         isNullable: true,
                     },
                     {
@@ -72,11 +71,6 @@ export class User1632891593011 implements MigrationInterface {
                         type: 'enum',
                         enum: Object.values(UserStatus),
                         default: `'${UserStatus.WAITING_FOR_APPROVAL}'`,
-                    },
-                    {
-                        name: 'fingerId',
-                        type: 'int',
-                        isNullable: true,
                     },
                     {
                         name: 'lastLoginAt',
@@ -91,46 +85,6 @@ export class User1632891593011 implements MigrationInterface {
                     {
                         name: 'roleId',
                         type: 'int',
-                    },
-                    {
-                        name: 'provinceId',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'idCardIssuePlace',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'taxCode',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'socialInsurance',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'bank',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'bankAccount',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'citizenId',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'citizenIdIssuedAt',
-                        type: 'datetime',
-                        isNullable: true,
                     },
                     {
                         name: 'note',

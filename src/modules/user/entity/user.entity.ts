@@ -48,9 +48,6 @@ export class User extends BaseEntity {
     address: string;
 
     @Column({ length: 2000, nullable: true })
-    hometownAddress: string;
-
-    @Column({ length: 2000, nullable: true })
     note: string;
 
     @Column({
@@ -79,38 +76,11 @@ export class User extends BaseEntity {
     })
     status: UserStatus;
 
-    @Column({ nullable: true })
-    fingerId: number;
-
     @Column({ type: 'timestamp', nullable: true })
     lastLoginAt: Date;
 
-    @Column({ type: String, nullable: true })
-    taxCode: string;
-
-    @Column({ type: String, nullable: true })
-    socialInsurance: string;
-
-    @Column({ type: String, nullable: true })
-    bank: string;
-
-    @Column({ type: String, nullable: true })
-    bankAccount: string;
-
-    @Column({ type: String, nullable: true })
-    citizenId: string;
-
-    @CreateDateColumn({ type: 'timestamp' })
-    citizenIdIssuedAt: Date;
-
     @Column({ nullable: true })
     avatarId: number;
-
-    @Column({
-        name: 'idCardIssuePlace',
-        nullable: true,
-    })
-    idCardIssuePlace: string;
 
     @Column({
         name: 'isSuperAdmin',

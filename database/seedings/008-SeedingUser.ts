@@ -25,7 +25,7 @@ export class SeedingUser1720963593400 implements MigrationInterface {
                 password: bcrypt.hashSync('ttlab@1234', bcrypt.genSaltSync(10)),
                 status: UserStatus.ACTIVE,
                 roleId: role.id,
-                position: 'CEO',
+                position: 'Waiter',
             };
             const items = [
                 {

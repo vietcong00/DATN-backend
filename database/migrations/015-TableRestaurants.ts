@@ -1,4 +1,4 @@
-import { FloorRestaurant } from './../../src/modules/table-diagram/tableDiagram.constant';
+import { FloorRestaurant } from '../../src/modules/table-diagram/tableDiagram.constant';
 import { TableStatus } from '../../src/modules/booking/booking.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';

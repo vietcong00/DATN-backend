@@ -46,15 +46,6 @@ export const updateProfileSchema = Joi.object({
         .optional()
         .label('auth.fields.address')
         .allow(null),
-    hometownAddress: Joi.string()
-        .allow('')
-        .max(TEXTAREA_MAX_LENGTH)
-        .optional()
-        .label('auth.fields.hometownAddress')
-        .allow(null),
-    idCardIssuePlace: Joi.string()
-        .required()
-        .label('auth.fields.idCardIssuePlace'),
     avatarId: Joi.number()
         .positive()
         .max(MAX_INTEGER)
@@ -69,37 +60,6 @@ export const updateProfileSchema = Joi.object({
         .max(INPUT_TEXT_MAX_LENGTH)
         .required()
         .label('auth.fields.position'),
-    bank: Joi.string()
-        .allow(null)
-        .max(INPUT_TEXT_MAX_LENGTH)
-        .required('user.fields.bank'),
-    bankAccount: Joi.string()
-        .allow(null)
-        .max(MAX_BANK_ACCOUNT_LENGTH)
-        .min(MIN_BANK_ACCOUNT_LENGTH)
-        .required('user.fields.bankAccount'),
-    taxCode: Joi.string()
-        .allow(null, '')
-        .min(MIN_TAX_CODE_LENGTH)
-        .max(MAX_TAX_CODE_LENGTH)
-        .label('user.fields.taxCode'),
-    socialInsurance: Joi.string()
-        .allow(null, '')
-        .min(MIN_SOCIAL_INSURANCE_LENGTH)
-        .max(MAX_SOCIAL_INSURANCE_LENGTH)
-        .label('user.fields.socialInsurance'),
-    citizenId: Joi.string()
-        .allow(null)
-        .max(MAX_CITIZEN_ID_LENGTH)
-        .min(MIN_CITIZEN_ID_LENGTH)
-        .required('user.fields.socialInsurance'),
-    citizenIdIssuedAt: Joi.date()
-        .allow(null)
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_SS_COLON)
-        .min(INPUT_MIN_DATE)
-        .less('now')
-        .optional()
-        .label('user.fields.citizenIdIssuedAt'),
     provinceId: Joi.number()
         .positive()
         .max(MAX_INTEGER)
@@ -112,15 +72,8 @@ export class UpdateProfileDto {
     fullName!: string;
     birthday!: Date;
     phoneNumber!: string;
-    idCardIssuePlace!: string;
     avatarId!: number;
     gender!: UserGender;
     provinceId!: number;
-    bank!: string;
-    bankAccount!: string;
-    citizenId!: string;
-    hometownAddress: string;
     address: string;
-    taxCode: string;
-    socialInsurance: string;
 }

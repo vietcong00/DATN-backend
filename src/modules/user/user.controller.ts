@@ -10,8 +10,6 @@ import {
     InternalServerErrorException,
     Query,
     ParseIntPipe,
-    UseInterceptors,
-    UploadedFile,
     Request,
 } from '@nestjs/common';
 import { I18nRequestScopeService } from 'nestjs-i18n';
@@ -20,15 +18,12 @@ import { UserService } from './services/user.service';
 import {
     CreateUserDto,
     CreateUserSchema,
-    ImportUserSchema,
-    ImportUsersDto,
 } from './dto/requests/create-user.dto';
 import {
     UpdateUserDto,
     UpdateUserSchema,
 } from './dto/requests/update-user.dto';
 import { JwtGuard } from '../../common/guards/jwt.guard';
-import { DEFAULT_LIMIT_FOR_PAGINATION } from '../../common/constants';
 import { UserList } from './dto/response/api-response.dto';
 import { DatabaseService } from '../../common/services/database.service';
 import { User } from './entity/user.entity';
@@ -41,12 +36,11 @@ import {
     UserStatusDto,
     UserStatusSchema,
 } from './dto/requests/common-user.dto';
-import { AllowUpdateStatus, excel, UserStatus } from './user.constant';
+import { AllowUpdateStatus, UserStatus } from './user.constant';
 import {
     ErrorResponse,
     SuccessResponse,
 } from '../../common/helpers/api.response';
-import { FileInterceptor } from '@nestjs/platform-express';
 import {
     AuthorizationGuard,
     Permissions,
@@ -61,8 +55,6 @@ import { HttpStatus } from 'src/common/constants';
 import { Role } from '../role/entity/role.entity';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
 import { Province } from './entity/province.entity';
-import { uniq } from 'lodash';
-import { ImportUserService } from './services/user.import.service';
 
 @Controller('user')
 @UseGuards(JwtGuard, AuthorizationGuard)
@@ -71,7 +63,6 @@ export class UserController {
         private readonly usersService: UserService,
         private readonly i18n: I18nRequestScopeService,
         private readonly databaseService: DatabaseService,
-        private readonly importUserService: ImportUserService,
     ) {}
 
     @Get()
@@ -120,59 +111,9 @@ export class UserController {
         data: CreateUserDto,
     ) {
         try {
-            if (data.socialInsurance) {
-                if (
-                    await this.databaseService.checkItemExist(
-                        User,
-                        'socialInsurance',
-                        data.socialInsurance,
-                    )
-                ) {
-                    const message = await this.i18n.translate(
-                        'user.common.error.socialInsurance.exist',
-                    );
-                    return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                        {
-                            key: 'socialInsurance',
-                            errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                            message: message,
-                        },
-                    ]);
-                }
-            }
-            if (data.taxCode) {
-                if (
-                    await this.databaseService.checkItemExist(
-                        User,
-                        'taxCode',
-                        data.taxCode,
-                    )
-                ) {
-                    const message = await this.i18n.translate(
-                        'user.common.error.taxCode.exist',
-                    );
-                    return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                        {
-                            key: 'taxCode',
-                            errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                            message: message,
-                        },
-                    ]);
-                }
-            }
             const promises = [
                 this.databaseService.checkItemExist(User, 'email', data.email),
                 this.databaseService.checkItemExist(Role, 'id', data.roleId),
-                this.databaseService.checkItemExist(
-                    User,
-                    'bankAccount',
-                    data.bankAccount,
-                ),
-                this.databaseService.checkItemExist(
-                    User,
-                    'citizenId',
-                    data.citizenId,
-                ),
                 (userPositionList || [])
                     .map((u) => u?.code)
                     .includes(data.position),
@@ -183,8 +124,9 @@ export class UserController {
                 ),
             ];
 
-            const [user, role, bankAccount, citizenId, position, province] =
-                await Promise.all(promises);
+            const [user, role, position, province] = await Promise.all(
+                promises,
+            );
 
             if (user) {
                 const message = await this.i18n.translate(
@@ -206,30 +148,6 @@ export class UserController {
                     {
                         key: 'roleId',
                         errorCode: HttpStatus.ITEM_NOT_FOUND,
-                        message: message,
-                    },
-                ]);
-            }
-            if (bankAccount) {
-                const message = await this.i18n.translate(
-                    'user.common.error.bankAccount.exist',
-                );
-                return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                    {
-                        key: 'bankAccount',
-                        errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                        message: message,
-                    },
-                ]);
-            }
-            if (citizenId) {
-                const message = await this.i18n.translate(
-                    'user.common.error.citizenId.exist',
-                );
-                return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                    {
-                        key: 'citizenId',
-                        errorCode: HttpStatus.ITEM_ALREADY_EXIST,
                         message: message,
                     },
                 ]);
@@ -295,62 +213,9 @@ export class UserController {
                     [],
                 );
             }
-            if (data.socialInsurance) {
-                if (
-                    await this.databaseService.checkItemExist(
-                        User,
-                        'socialInsurance',
-                        data.socialInsurance,
-                        id,
-                    )
-                ) {
-                    const message = await this.i18n.translate(
-                        'user.common.error.socialInsurance.exist',
-                    );
-                    return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                        {
-                            key: 'socialInsurance',
-                            errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                            message: message,
-                        },
-                    ]);
-                }
-            }
-            if (data.taxCode) {
-                if (
-                    await this.databaseService.checkItemExist(
-                        User,
-                        'taxCode',
-                        data.taxCode,
-                        id,
-                    )
-                ) {
-                    const message = await this.i18n.translate(
-                        'user.common.error.taxCode.exist',
-                    );
-                    return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                        {
-                            key: 'taxCode',
-                            errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                            message: message,
-                        },
-                    ]);
-                }
-            }
+
             const promises = [
                 this.databaseService.checkItemExist(Role, 'id', data.roleId),
-                this.databaseService.checkItemExist(
-                    User,
-                    'bankAccount',
-                    data.bankAccount,
-                    id,
-                ),
-                this.databaseService.checkItemExist(
-                    User,
-                    'citizenId',
-                    data.citizenId,
-                    id,
-                ),
                 (userPositionList || [])
                     .map((u) => u?.code)
                     .includes(data.position),
@@ -360,8 +225,7 @@ export class UserController {
                     data.provinceId,
                 ),
             ];
-            const [role, bankAccount, citizenId, position, province] =
-                await Promise.all(promises);
+            const [role, position, province] = await Promise.all(promises);
 
             if (!role) {
                 const message = await this.i18n.translate(
@@ -371,30 +235,6 @@ export class UserController {
                     {
                         key: 'roleId',
                         errorCode: HttpStatus.ITEM_NOT_FOUND,
-                        message: message,
-                    },
-                ]);
-            }
-            if (bankAccount) {
-                const message = await this.i18n.translate(
-                    'user.common.error.bankAccount.exist',
-                );
-                return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                    {
-                        key: 'bankAccount',
-                        errorCode: HttpStatus.ITEM_ALREADY_EXIST,
-                        message: message,
-                    },
-                ]);
-            }
-            if (citizenId) {
-                const message = await this.i18n.translate(
-                    'user.common.error.citizenId.exist',
-                );
-                return new ErrorResponse(HttpStatus.BAD_REQUEST, message, [
-                    {
-                        key: 'citizenId',
-                        errorCode: HttpStatus.ITEM_ALREADY_EXIST,
                         message: message,
                     },
                 ]);
@@ -542,109 +382,6 @@ export class UserController {
                 newValue: { ...newValue },
             });
             return new SuccessResponse(savedUser);
-        } catch (error) {
-            throw new InternalServerErrorException(error);
-        }
-    }
-
-    @Post('bulk-create')
-    @Permissions([`${PermissionResources.USER}_${PermissionActions.CREATE}`])
-    async importAsset(
-        @Request() req,
-        @Body(new TrimObjectPipe(), new JoiValidationPipe(ImportUserSchema))
-        body: ImportUsersDto,
-    ) {
-        try {
-            const emailList = await this.importUserService.getEmails(
-                uniq(body.importUsers.map((importAsset) => importAsset.email)),
-            );
-
-            const roleList = await this.importUserService.getRoles(
-                uniq(body.importUsers.map((importAsset) => importAsset.role)),
-            );
-
-            const taxCodeList = await this.importUserService.getTaxCodes(
-                uniq(
-                    body.importUsers.map((importAsset) => importAsset.taxCode),
-                ),
-            );
-
-            const bankAccountList =
-                await this.importUserService.getBankAccounts(
-                    uniq(
-                        body.importUsers.map(
-                            (importAsset) => importAsset.bankAccount,
-                        ),
-                    ),
-                );
-
-            const citizenIdList = await this.importUserService.getCitizenIds(
-                uniq(
-                    body.importUsers.map(
-                        (importAsset) => importAsset.citizenId,
-                    ),
-                ),
-            );
-
-            const provinceList = await this.importUserService.getProvinces(
-                uniq(
-                    body.importUsers.map((importAsset) => importAsset.province),
-                ),
-            );
-
-            const socialInsuranceList =
-                await this.importUserService.getSocialInsurances(
-                    uniq(
-                        body.importUsers.map(
-                            (importAsset) => importAsset.socialInsurance,
-                        ),
-                    ),
-                );
-
-            const validationResults = await Promise.all(
-                body.importUsers.map((user) =>
-                    this.importUserService.validateImportUser(
-                        user,
-                        emailList,
-                        roleList.map((role) => role.name),
-                        taxCodeList,
-                        bankAccountList,
-                        citizenIdList,
-                        provinceList.map((province) => province.name),
-                        socialInsuranceList,
-                    ),
-                ),
-            );
-
-            let importAssetResults;
-            validationResults.forEach((validationResult) => {
-                importAssetResults = {
-                    ...importAssetResults,
-                    [validationResult.index]: validationResult.validationResult,
-                };
-            });
-
-            if (
-                !validationResults.some(
-                    (validationResult) =>
-                        !validationResult.validationResult.isValid,
-                )
-            ) {
-                this.importUserService.bulkCreateUsers(
-                    body.importUsers.map((importUser) => {
-                        return this.importUserService.mapImportUser(
-                            importUser,
-                            roleList,
-                            provinceList,
-                            req.loginUser?.id,
-                        );
-                    }),
-                );
-            }
-
-            return new SuccessResponse({
-                results: importAssetResults,
-            });
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

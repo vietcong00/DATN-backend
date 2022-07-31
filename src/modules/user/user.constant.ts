@@ -5,17 +5,9 @@ import {
     INPUT_TEXT_MAX_LENGTH,
     INPUT_MIN_DATE,
     INPUT_PHONE_MAX_LENGTH,
-    MAX_CITIZEN_ID_LENGTH,
-    MIN_CITIZEN_ID_LENGTH,
-    MAX_BANK_ACCOUNT_LENGTH,
-    MIN_BANK_ACCOUNT_LENGTH,
     REGEX,
     MAX_INTEGER,
     DATE_TIME_FORMAT,
-    MAX_SOCIAL_INSURANCE_LENGTH,
-    MAX_TAX_CODE_LENGTH,
-    MIN_SOCIAL_INSURANCE_LENGTH,
-    MIN_TAX_CODE_LENGTH,
 } from '../../common/constants';
 const Joi = BaseJoi.extend(JoiDate);
 
@@ -61,15 +53,6 @@ export const userFields = {
         .max(TEXTAREA_MAX_LENGTH)
         .optional()
         .label('user.fields.address'),
-    hometownAddress: Joi.string()
-        .allow(null)
-        .allow('')
-        .max(TEXTAREA_MAX_LENGTH)
-        .optional()
-        .label('user.fields.hometownAddress'),
-    idCardIssuePlace: Joi.string()
-        .required()
-        .label('user.fields.idCardIssuePlace'),
     gender: Joi.string()
         .allow(null)
         .valid(UserGender.FEMALE, UserGender.MALE, UserGender.OTHER)
@@ -91,38 +74,7 @@ export const userFields = {
         .optional()
         .allow(null)
         .label('user.fields.avatarId'),
-    bank: Joi.string()
-        .allow(null)
-        .max(INPUT_TEXT_MAX_LENGTH)
-        .required('user.fields.bank'),
-    bankAccount: Joi.string()
-        .allow(null)
-        .max(MAX_BANK_ACCOUNT_LENGTH)
-        .min(MIN_BANK_ACCOUNT_LENGTH)
-        .required('user.fields.bankAccount'),
-    taxCode: Joi.string()
-        .allow(null, '')
-        .min(MIN_TAX_CODE_LENGTH)
-        .max(MAX_TAX_CODE_LENGTH)
-        .label('user.fields.taxCode'),
-    socialInsurance: Joi.string()
-        .allow(null, '')
-        .min(MIN_SOCIAL_INSURANCE_LENGTH)
-        .max(MAX_SOCIAL_INSURANCE_LENGTH)
-        .label('user.fields.socialInsurance'),
     note: Joi.string().allow(null, '').max(TEXTAREA_MAX_LENGTH).optional(),
-    citizenId: Joi.string()
-        .allow(null)
-        .max(MAX_CITIZEN_ID_LENGTH)
-        .min(MIN_CITIZEN_ID_LENGTH)
-        .required('user.fields.socialInsurance'),
-    citizenIdIssuedAt: Joi.date()
-        .allow(null)
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_SS_COLON)
-        .min(INPUT_MIN_DATE)
-        .less('now')
-        .optional()
-        .label('user.fields.citizenIdIssuedAt'),
     position: Joi.string().required().label('user.fields.position'),
 };
 
@@ -144,15 +96,7 @@ export const userListAttributes = [
     'users.position',
     'users.role',
     'users.address',
-    'users.hometownAddress',
-    'users.taxCode',
-    'users.socialInsurance',
-    'users.bankAccount',
     'users.province',
-    'users.bank',
-    'users.citizenId',
-    'users.citizenIdIssuedAt',
-    'users.idCardIssuePlace',
     'file.fileName',
     'users.lastLoginAt',
     'users.createdAt',

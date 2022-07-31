@@ -6,7 +6,6 @@ import { TransformInterceptor } from '../../common/transform.interceptor';
 import { ProvinceService } from './services/province.service';
 import { CommonController } from './common.controller';
 import { DatabaseService } from '../../common/services/database.service';
-import { Bank } from 'src/modules/common/entity/bank.entity';
 import { CommonDropdownService } from './services/common-dropdown.service';
 import { ConfigService } from '@nestjs/config';
 import { Province } from '../user/entity/province.entity';
@@ -18,7 +17,7 @@ import { BillingService } from '../billing/service/billing.service';
 
 @Global()
 @Module({
-    imports: [TypeOrmModule.forFeature([Province, Bank])],
+    imports: [TypeOrmModule.forFeature([Province])],
     controllers: [CommonController],
     providers: [
         {

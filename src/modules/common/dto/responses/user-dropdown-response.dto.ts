@@ -16,9 +16,7 @@ export class ListCategoryDropdown extends CommonListResponse<CategoryDropdownRes
 export class ListFoodDropdown extends CommonListResponse<FoodDropdownResponseDto> {
     items: FoodDropdownResponseDto[];
 }
-export class ListBankDropdown extends CommonListResponse<BankDropdownResponseDto> {
-    items: BankDropdownResponseDto[];
-}
+
 export class ListProvinceDropdown extends CommonListResponse<ProvinceDropdownResponseDto> {
     items: ProvinceDropdownResponseDto[];
 }

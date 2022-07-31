@@ -4,7 +4,6 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { Brackets, EntityManager, In, Not } from 'typeorm';
 import { DEFAULT_LIMIT_FOR_DROPDOWN } from '../../../common/constants';
 import {
-    ListBankDropdown,
     ListCategoryDropdown,
     ListFoodDropdown,
     ListProvinceDropdown,
@@ -14,7 +13,6 @@ import {
 import { QueryDropdown } from '../dto/request/dropdown.dto';
 import { User } from 'src/modules/user/entity/user.entity';
 import { Role } from 'src/modules/role/entity/role.entity';
-import { Bank } from '../entity/bank.entity';
 import {
     WITH_DELETED_OPTION,
     WITH_INACTIVE_OPTION,
@@ -23,12 +21,10 @@ import {
 import { Province } from 'src/modules/user/entity/province.entity';
 import { UserStatus } from 'src/modules/user/user.constant';
 import { Food } from 'src/modules/food/entity/food.entity';
-import { File } from 'src/modules/file/entity/file.entity';
 import { makeFileUrl } from 'src/common/helpers/common.function';
 
 const userDropdownListAttributes: (keyof User)[] = ['id', 'fullName', 'status'];
 const roleDropdownListAttributes: (keyof Role)[] = ['id', 'name'];
-const bankDropdownListAttributes: (keyof Bank)[] = ['id', 'name', 'code'];
 const provinceDropdownListAttributes: (keyof Province)[] = ['id', 'name'];
 const categoryDropdownListAttributes: (keyof Category)[] = [
     'id',
@@ -133,31 +129,6 @@ export class CommonDropdownService {
                 Role,
                 {
                     select: roleDropdownListAttributes,
-                    where: (queryBuilder) =>
-                        this.generateQueryBuilder(queryBuilder, {
-                            page,
-                            limit,
-                            status: [],
-                            withDeleted: false,
-                        }),
-                },
-            );
-            return {
-                totalItems,
-                items,
-            };
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    async getListBank(query: QueryDropdown): Promise<ListBankDropdown> {
-        try {
-            const { page, limit } = query;
-            const [items, totalItems] = await this.dbManager.findAndCount(
-                Bank,
-                {
-                    select: bankDropdownListAttributes,
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             page,

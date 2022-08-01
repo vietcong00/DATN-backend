@@ -26,6 +26,9 @@ const ReportRevenueAttribute: (keyof ReportRevenue)[] = [
     'billingRevenue',
     'differenceRevenue',
     'note',
+    'date',
+    'status',
+    'billingCount',
     'createdAt',
     'updatedAt',
 ];

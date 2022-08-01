@@ -1,3 +1,4 @@
+import { AcceptStatus } from './../../common/common.constant';
 import { SHIFT } from '../report_revenue.constant';
 import { User } from 'src/modules/user/entity/user.entity';
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
@@ -34,4 +35,13 @@ export class ReportRevenue extends BaseEntity {
 
     @Column({ length: 2000, nullable: true })
     note: string;
+
+    @Column({ type: 'timestamp', nullable: true })
+    date: Date;
+
+    @Column({ nullable: true })
+    billingCount: number;
+
+    @Column({ nullable: true })
+    status: AcceptStatus;
 }

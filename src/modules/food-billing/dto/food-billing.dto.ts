@@ -49,6 +49,10 @@ export const FoodBillingSchema = {
     foodId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     billingId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     quantity: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
+    tableName: Joi.string()
+        .max(INPUT_TEXT_MAX_LENGTH)
+        .optional()
+        .allow(null, ''),
     note: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional().allow(null, ''),
 };
 
@@ -62,6 +66,11 @@ export const CreateFoodBillingListSchema = Joi.object().keys({
             foodId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
             billingId: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
             quantity: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
+            singlePrice: Joi.number()
+                .max(MAX_INTEGER)
+                .optional()
+                .allow(null, ''),
+            tableName: Joi.string().max(INPUT_TEXT_MAX_LENGTH).allow(null, ''),
             note: Joi.string()
                 .max(INPUT_TEXT_MAX_LENGTH)
                 .optional()
@@ -104,8 +113,10 @@ export class FoodBillingQueryStringDto {
 
 export class CreateFoodBillingDto {
     foodId: number;
+    tableName: string;
     billingId: number;
     quantity: number;
+    singlePrice: number;
     note: string;
     updatedAt: string;
     createdBy?: number;
@@ -129,6 +140,7 @@ export class CreateFoodBillingListDto {
 export class UpdateFoodBillingDto {
     foodId: number;
     billingId: number;
+    singlePrice: number;
     quantity: number;
     note: string;
     updatedBy?: number;
@@ -153,6 +165,7 @@ export class FoodBillingDetailResponseDto {
     id: number;
     foodId: number;
     billingId: number;
+    singlePrice: number;
     quantity: number;
     note: string;
     createdBy?: number;

@@ -27,6 +27,9 @@ export class FoodBilling extends BaseEntity {
     @Column({ nullable: true })
     quantity: number;
 
+    @Column({ nullable: true })
+    singlePrice: number;
+
     @Column({ length: 2000, nullable: true })
     note: string;
 }

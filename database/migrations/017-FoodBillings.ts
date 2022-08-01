@@ -31,6 +31,11 @@ export class FoodBilling1632891593051 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: 'singlePrice',
+                        type: 'int',
+                        isNullable: true,
+                    },
+                    {
                         name: 'note',
                         type: 'varchar',
                         length: '255',

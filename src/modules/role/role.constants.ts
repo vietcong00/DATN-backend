@@ -36,4 +36,5 @@ export enum PermissionActions {
     DELETE = 'delete',
     LOGIN = 'login',
     UPDATE_ROLE = 'update_role',
+    APPROVE_STATUS = 'approve_status',
 }

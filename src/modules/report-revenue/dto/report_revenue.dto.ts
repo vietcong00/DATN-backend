@@ -1,3 +1,4 @@
+import { AcceptStatus } from './../../common/common.constant';
 import { SHIFT } from '../report_revenue.constant';
 import { MAX_INTEGER } from '../../../common/constants';
 import * as BaseJoi from 'joi';
@@ -45,6 +46,12 @@ export const ReportRevenueSchema = {
     bankingRevenue: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     differenceRevenue: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
     note: Joi.string().max(INPUT_TEXT_MAX_LENGTH).optional().allow(null, ''),
+    date: Joi.date(),
+    billingCount: Joi.number().max(MAX_INTEGER).optional().allow(null, ''),
+    status: Joi.string()
+        .valid(...Object.values(AcceptStatus))
+        .optional()
+        .allow(null, ''),
 };
 
 export const CreateReportRevenueSchema = Joi.object().keys({
@@ -76,7 +83,10 @@ export class UpdateReportRevenueDto {
     cashAtEndingOfShift: number;
     bankingRevenue: number;
     differenceRevenue: number;
+    date: string;
+    billingCount: number;
     note: string;
+    status: AcceptStatus;
     updatedBy?: number;
 }
 
@@ -89,6 +99,9 @@ export class ReportRevenueDetailResponseDto {
     bankingRevenue: number;
     billingRevenue: number;
     differenceRevenue: number;
+    date: Date;
+    billingCount: number;
+    status: AcceptStatus;
     note: string;
     createdBy?: number;
     createdAt?: Date;

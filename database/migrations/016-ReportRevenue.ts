@@ -1,3 +1,4 @@
+import { AcceptStatus } from './../../src/modules/common/common.constant';
 import { SHIFT } from '../../src/modules/report-revenue/report_revenue.constant';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { TABLE_NAME } from '../constant';
@@ -19,6 +20,12 @@ export class ReportRevenue1632891593050 implements MigrationInterface {
                         name: 'shift',
                         type: 'enum',
                         enum: Object.values(SHIFT),
+                        isNullable: true,
+                    },
+                    {
+                        name: 'status',
+                        type: 'enum',
+                        enum: Object.values(AcceptStatus),
                         isNullable: true,
                     },
                     {
@@ -50,6 +57,15 @@ export class ReportRevenue1632891593050 implements MigrationInterface {
                         name: 'differenceRevenue',
                         type: 'int',
                         isNullable: true,
+                    },
+                    {
+                        name: 'billingCount',
+                        type: 'int',
+                        isNullable: true,
+                    },
+                    {
+                        name: 'date',
+                        type: 'timestamp',
                     },
                     {
                         name: 'note',

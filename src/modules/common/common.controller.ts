@@ -213,7 +213,12 @@ export class CommonController {
                 delete element.updatedAt;
             });
             await this.foodBillingService.createFoodBillings(body);
+            let paymentTotal = 0;
+            body.foodList.forEach((item) => {
+                paymentTotal += item.quantity * item.singlePrice;
+            });
             const billing = await this.billingService.updateBillingStatus(id, {
+                paymentTotal,
                 billingStatus: BillingStatus.WAIT_FOR_PAY,
             });
             return new SuccessResponse(billing);

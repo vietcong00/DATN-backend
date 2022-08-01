@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { TABLE_NAME } from '../constant';
-import { ReasonCanceled } from '../../src/modules/food-billing/food-billing.constant';
 dotenv.config();
 
 export class SeedingFoodBilling1720963593405 implements MigrationInterface {
@@ -12,6 +11,7 @@ export class SeedingFoodBilling1720963593405 implements MigrationInterface {
                 billingId: 1,
                 quantity: 3,
                 note: 'ahihi',
+                singlePrice: 20000,
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 createdBy: 1,
@@ -22,6 +22,7 @@ export class SeedingFoodBilling1720963593405 implements MigrationInterface {
                 billingId: 1,
                 quantity: 6,
                 note: 'ahihi',
+                singlePrice: 15000,
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 createdBy: 1,

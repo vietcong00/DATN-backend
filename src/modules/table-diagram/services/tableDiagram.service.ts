@@ -4,6 +4,7 @@ import { UpdateTableDto } from '../dto/requests/update-tablesRestaurant.dto';
 import { CreateTableDto } from '../dto/requests/create-tablesRestaurant.dto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import {
+    BLOCK_TIME_BOOKING,
     DEFAULT_FIRST_PAGE,
     DEFAULT_LIMIT_FOR_PAGINATION,
     DEFAULT_ORDER_BY,
@@ -13,6 +14,9 @@ import { Brackets, EntityManager, In, Like } from 'typeorm';
 import { TablesRestaurant } from '../entity/tablesRestaurant.entity';
 import { TableListQueryStringDto } from '../dto/requests/list-tablesRestaurant.dto';
 import { Booking } from 'src/modules/booking/entity/booking.entity';
+import { calculateDuration } from 'src/common/helpers/common.function';
+import { BillingStatus } from 'src/modules/billing/billing.constant';
+import { Billing } from 'src/modules/billing/entity/billing.entity';
 
 const tableAttributes: (keyof TablesRestaurant)[] = [
     'id',
@@ -212,6 +216,45 @@ export class TableDiagramService {
                     deletedBy,
                 },
             );
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async checkTableIsUsing(tableId: number): Promise<boolean> {
+        try {
+            const count = await this.dbManager.count(Billing, {
+                where: {
+                    tableId,
+                    status: In([
+                        BillingStatus.WAIT_FOR_SELECT_FOOD,
+                        BillingStatus.EATING,
+                        BillingStatus.WAIT_FOR_PAY,
+                    ]),
+                },
+            });
+            return !!count;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async checkCanSetupTable(
+        timeArrival: Date,
+        tableId: number,
+    ): Promise<boolean> {
+        try {
+            const bookings = await this.dbManager.find(Booking, {
+                where: { tableId, status: BookingStatus.WAITING },
+            });
+            return !bookings.some((item) => {
+                return (
+                    calculateDuration(
+                        timeArrival.toUTCString(),
+                        item.arrivalTime.toUTCString(),
+                    ) < BLOCK_TIME_BOOKING
+                );
+            });
         } catch (error) {
             throw error;
         }

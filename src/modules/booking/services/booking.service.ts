@@ -1,3 +1,5 @@
+import { BillingStatus } from './../../billing/billing.constant';
+import { Billing } from './../../billing/entity/billing.entity';
 import { BLOCK_TIME_BOOKING } from './../../../common/constants';
 import { BookingDetailResponseDto } from './../dto/responses/booking-response.dto';
 import { UpdateBookingDto } from './../dto/requests/update-booking.dto';
@@ -142,27 +144,6 @@ export class BookingService {
                 where: { tableId, status: BookingStatus.WAITING },
             });
             return count > 0;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async checkCanSetupTable(
-        timeArrival: Date,
-        tableId: number,
-    ): Promise<boolean> {
-        try {
-            const bookings = await this.dbManager.find(Booking, {
-                where: { tableId, status: BookingStatus.WAITING },
-            });
-            return !bookings.some((item) => {
-                return (
-                    calculateDuration(
-                        timeArrival.toUTCString(),
-                        item.arrivalTime.toUTCString(),
-                    ) < BLOCK_TIME_BOOKING
-                );
-            });
         } catch (error) {
             throw error;
         }

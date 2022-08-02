@@ -150,13 +150,44 @@ export class TableDiagramController {
                 );
             }
 
-            if (
-                !(await this.bookingService.checkCanSetupTable(new Date(), id))
-            ) {
-                const message = await this.i18n.translate(
-                    'table.message.error.conflictTime',
-                );
-                return new ErrorResponse(HttpStatus.ITEM_IS_USING, message, []);
+            if (body.status === TableStatus.USED) {
+                if (
+                    !(await this.tableDiagramService.checkCanSetupTable(
+                        new Date(),
+                        id,
+                    ))
+                ) {
+                    const message = await this.i18n.translate(
+                        'table.message.error.conflictTime',
+                    );
+                    return new ErrorResponse(
+                        HttpStatus.ITEM_IS_USING,
+                        message,
+                        [],
+                    );
+                }
+
+                if (await this.tableDiagramService.checkTableIsUsing(id)) {
+                    const message = await this.i18n.translate(
+                        'table.message.error.tableUsing',
+                    );
+                    return new ErrorResponse(
+                        HttpStatus.ITEM_IS_USING,
+                        message,
+                        [],
+                    );
+                }
+            } else if (body.status === TableStatus.READY) {
+                if (!(await this.tableDiagramService.checkTableIsUsing(id))) {
+                    const message = await this.i18n.translate(
+                        'table.message.error.tableUsing',
+                    );
+                    return new ErrorResponse(
+                        HttpStatus.ITEM_IS_USING,
+                        message,
+                        [],
+                    );
+                }
             }
             body.updatedBy = req.loginUser.id;
             const isExistBookingWaiting =

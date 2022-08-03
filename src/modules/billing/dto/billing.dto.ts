@@ -86,17 +86,17 @@ export class BillingQueryStringDto {
 }
 
 export class CreateBillingDto {
-    customerName: string;
-    customerPhone: string;
+    customerName?: string;
+    customerPhone?: string;
     tableId: number;
-    cashierId: number;
-    paymentTotal: number;
-    paymentMethod: PaymentMethod;
-    paymentTime: Date;
+    cashierId?: number;
+    paymentTotal?: number;
+    paymentMethod?: PaymentMethod;
+    paymentTime?: Date;
     arrivalTime: Date;
     billingStatus: BillingStatus;
-    reasonCanceled: ReasonCanceled;
-    note: string;
+    reasonCanceled?: ReasonCanceled;
+    note?: string;
     createdBy?: number;
 }
 

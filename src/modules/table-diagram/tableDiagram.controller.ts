@@ -45,6 +45,8 @@ import { RemoveEmptyQueryPipe } from 'src/common/pipes/remove.empty.query.pipe';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
 import { TableStatus } from './tableDiagram.constant';
 import { PermissionResources, PermissionActions } from '../role/role.constants';
+import { BillingService } from '../billing/service/billing.service';
+import { BillingStatus } from '../billing/billing.constant';
 
 @Controller('table')
 @UseGuards(JwtGuard, AuthorizationGuard)
@@ -52,6 +54,7 @@ export class TableDiagramController {
     constructor(
         private readonly tableDiagramService: TableDiagramService,
         private readonly bookingService: BookingService,
+        private readonly billingService: BillingService,
         private readonly databaseService: DatabaseService,
         private readonly i18n: I18nRequestScopeService,
     ) {}
@@ -166,7 +169,6 @@ export class TableDiagramController {
                         [],
                     );
                 }
-
                 if (await this.tableDiagramService.checkTableIsUsing(id)) {
                     const message = await this.i18n.translate(
                         'table.message.error.tableUsing',
@@ -177,8 +179,15 @@ export class TableDiagramController {
                         [],
                     );
                 }
+
+                await this.billingService.createBilling({
+                    createdBy: req.loginUser.id,
+                    billingStatus: BillingStatus.WAIT_FOR_SELECT_FOOD,
+                    tableId: id,
+                    arrivalTime: new Date(),
+                });
             } else if (body.status === TableStatus.READY) {
-                if (!(await this.tableDiagramService.checkTableIsUsing(id))) {
+                if (await this.tableDiagramService.checkTableIsUsing(id)) {
                     const message = await this.i18n.translate(
                         'table.message.error.tableUsing',
                     );
@@ -189,12 +198,13 @@ export class TableDiagramController {
                     );
                 }
             }
+
             body.updatedBy = req.loginUser.id;
-            const isExistBookingWaiting =
-                await this.bookingService.checkExistBookingWaitingInTable(id);
-            if (body.status === TableStatus.READY && isExistBookingWaiting) {
-                body.status = TableStatus.BOOKED;
-            }
+            // const isExistBookingWaiting =
+            //     await this.bookingService.checkExistBookingWaitingInTable(id);
+            // if (body.status === TableStatus.READY && isExistBookingWaiting) {
+            //     body.status = TableStatus.BOOKED;
+            // }
             const updatedTable = await this.tableDiagramService.updateTable(
                 id,
                 body,

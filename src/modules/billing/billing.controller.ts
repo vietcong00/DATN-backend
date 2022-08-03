@@ -1,3 +1,4 @@
+import { TableDiagramService } from './../table-diagram/services/tableDiagram.service';
 import {
     Body,
     Controller,
@@ -49,6 +50,7 @@ export class BillingController {
         private readonly billingService: BillingService,
         private readonly i18n: I18nRequestScopeService,
         private readonly databaseService: DatabaseService,
+        private readonly tableDiagramService: TableDiagramService,
     ) {}
 
     @Get()
@@ -107,6 +109,26 @@ export class BillingController {
         try {
             body.createdBy = req.loginUser.id;
             body.billingStatus = BillingStatus.WAIT_FOR_SELECT_FOOD;
+            if (
+                !(await this.tableDiagramService.checkCanSetupTable(
+                    new Date(),
+                    body.tableId,
+                ))
+            ) {
+                const message = await this.i18n.translate(
+                    'table.message.error.conflictTime',
+                );
+                return new ErrorResponse(HttpStatus.ITEM_IS_USING, message, []);
+            }
+            if (
+                await this.tableDiagramService.checkTableIsUsing(body.tableId)
+            ) {
+                const message = await this.i18n.translate(
+                    'table.message.error.tableUsing',
+                );
+                return new ErrorResponse(HttpStatus.ITEM_IS_USING, message, []);
+            }
+
             const newBilling = await this.billingService.createBilling(body);
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,

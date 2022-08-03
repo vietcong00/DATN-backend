@@ -143,19 +143,36 @@ export class BookingController {
                 );
             }
             body.updatedBy = req.loginUser.id;
+            if (body.tableId) {
+                if (
+                    !(await this.tableDiagramService.checkCanSetupTable(
+                        body.arrivalTime,
+                        body.tableId,
+                    ))
+                ) {
+                    const message = await this.i18n.translate(
+                        'billing.message.error.conflictTime',
+                    );
+                    return new ErrorResponse(
+                        HttpStatus.ITEM_IS_USING,
+                        message,
+                        [],
+                    );
+                }
+            }
             const updatedBooking = await this.bookingService.updateBooking(
                 id,
                 body,
             );
-            const isExistBookingWaiting =
-                await this.bookingService.checkExistBookingWaitingInTable(
-                    updatedBooking.tableId,
-                );
-            this.tableDiagramService.updateStatusTableRelativeBooking(
-                updatedBooking.tableId,
-                updatedBooking.status,
-                isExistBookingWaiting,
-            );
+            // const isExistBookingWaiting =
+            //     await this.bookingService.checkExistBookingWaitingInTable(
+            //         updatedBooking.tableId,
+            //     );
+            // this.tableDiagramService.updateStatusTableRelativeBooking(
+            //     updatedBooking.tableId,
+            //     updatedBooking.status,
+            //     isExistBookingWaiting,
+            // );
 
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,

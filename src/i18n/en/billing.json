@@ -9,7 +9,8 @@
     "message": {
         "error": {
             "itemNotExist": "Billing does not exist",
-            "payer.waitingForApproval": "Payer is waiting for approval"
+            "payer.waitingForApproval": "Payer is waiting for approval",
+            "conflictTime": "This table is reserved"
         },
         "success": {
             "delete": "The billing has been deleted successfully"

@@ -113,14 +113,29 @@ export class TableDiagramService {
                 },
             });
 
+            const billings = await this.dbManager.find(Billing, {
+                select: ['id', 'tableId'],
+                where: {
+                    billingStatus: In([
+                        BillingStatus.EATING,
+                        BillingStatus.WAIT_FOR_SELECT_FOOD,
+                        BillingStatus.WAIT_FOR_PAY,
+                    ]),
+                },
+            });
+
             const userListResponse = items.map((table) => {
                 const bookingOfTables = bookings.filter(
                     (item) => item.tableId === table.id,
                 );
 
+                const isUsed = billings.some((item) => {
+                    return item.tableId === table.id;
+                });
                 return {
                     ...table,
                     bookingCount: bookingOfTables.length,
+                    isUsed,
                 };
             });
 
@@ -226,7 +241,7 @@ export class TableDiagramService {
             const count = await this.dbManager.count(Billing, {
                 where: {
                     tableId,
-                    status: In([
+                    billingStatus: In([
                         BillingStatus.WAIT_FOR_SELECT_FOOD,
                         BillingStatus.EATING,
                         BillingStatus.WAIT_FOR_PAY,
@@ -247,10 +262,11 @@ export class TableDiagramService {
             const bookings = await this.dbManager.find(Booking, {
                 where: { tableId, status: BookingStatus.WAITING },
             });
+
             return !bookings.some((item) => {
                 return (
                     calculateDuration(
-                        timeArrival.toUTCString(),
+                        new Date(timeArrival).toUTCString(),
                         item.arrivalTime.toUTCString(),
                     ) < BLOCK_TIME_BOOKING
                 );

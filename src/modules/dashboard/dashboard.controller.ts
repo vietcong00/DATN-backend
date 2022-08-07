@@ -27,6 +27,25 @@ export class DashboardController {
     ) {}
 
     @Get('/revenue')
+    async getRevenues(
+        @Query(
+            new RemoveEmptyQueryPipe(),
+            new JoiValidationPipe(revenueChartListQuerySchema),
+        )
+        query: IRevenueChartListQuery,
+    ) {
+        try {
+            const supportRequestCategoryList =
+                await this.dashboardService.getRevenues(query);
+            console.log(supportRequestCategoryList);
+
+            return new SuccessResponse(supportRequestCategoryList);
+        } catch (error) {
+            return new InternalServerErrorException(error);
+        }
+    }
+
+    @Get('/data')
     async getSupportRequestCategoryList(
         @Query(
             new RemoveEmptyQueryPipe(),
@@ -36,9 +55,7 @@ export class DashboardController {
     ) {
         try {
             const supportRequestCategoryList =
-                await this.dashboardService.getSupportRequestCategoryList(
-                    query,
-                );
+                await this.dashboardService.getData(query);
             console.log(supportRequestCategoryList);
 
             return new SuccessResponse(supportRequestCategoryList);

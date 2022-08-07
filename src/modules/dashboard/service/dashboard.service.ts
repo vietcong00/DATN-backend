@@ -9,6 +9,7 @@ import { DateRangeTypes } from '../dashboard.constant';
 import { orderBy } from 'lodash';
 import { take, skip } from 'rxjs';
 import { ReportRevenue } from 'src/modules/report-revenue/entity/report_revenue.entity';
+import { number } from 'joi';
 
 @Injectable()
 export class DashboardService {
@@ -31,18 +32,10 @@ export class DashboardService {
         }
     }
 
-    async getSupportRequestCategoryList(query: IRevenueChartListQuery) {
+    async getRevenues(query: IRevenueChartListQuery) {
         try {
             const { dateRanges = [], dateRangeType = DateRangeTypes.MONTH } =
                 query;
-
-            let groupCondition;
-
-            if (dateRangeType === DateRangeTypes.MONTH) {
-                groupCondition = { month: { $month: '$createdAt' } };
-            } else {
-                groupCondition = { day: { $dayOfMonth: '$createdAt' } };
-            }
 
             const revenues = await this.dbManager.find(ReportRevenue, {
                 where: (queryBuilder) =>
@@ -50,7 +43,6 @@ export class DashboardService {
                         dateRanges,
                     }),
             });
-            console.log(revenues.length);
 
             if (!revenues.length) {
                 return {
@@ -58,23 +50,64 @@ export class DashboardService {
                 };
             }
 
-            console.log(revenues.length);
-
+            const revenueMonth: {
+                month: number;
+                revenue: number;
+            }[] = [];
+            if (dateRangeType === DateRangeTypes.MONTH) {
+                for (let i = 0; i < 14; i++) {
+                    revenueMonth.push({
+                        month: i,
+                        revenue: 0,
+                    });
+                }
+            }
             const userTimes = revenues?.map((revenue) => {
                 if (dateRangeType === DateRangeTypes.MONTH) {
-                    return {
-                        month: revenue?.date,
-                        revenue: revenue.billingRevenue,
-                    };
+                    const month = revenue?.date.getMonth() + 1;
+                    revenueMonth[month].revenue += revenue.billingRevenue;
                 } else {
                     return {
-                        day: revenue?.date,
+                        day: revenue?.date.getDay(),
                         revenue: revenue.billingRevenue,
                     };
                 }
             });
+
+            return dateRangeType === DateRangeTypes.MONTH
+                ? {
+                      items: revenueMonth,
+                  }
+                : {
+                      items: userTimes,
+                  };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getData(query: IRevenueChartListQuery) {
+        try {
+            const { dateRanges = [], dateRangeType = DateRangeTypes.MONTH } =
+                query;
+
+            const revenues = await this.dbManager.find(ReportRevenue, {
+                where: (queryBuilder) =>
+                    this.generateRevenueChartQueryBuilder(queryBuilder, {
+                        dateRanges,
+                    }),
+            });
+            let billingCount = 0;
+            let revenueTotal = 0;
+            if (revenues.length) {
+                revenues.forEach((item) => {
+                    billingCount += item.billingCount;
+                    revenueTotal += item.billingRevenue;
+                });
+            }
             return {
-                items: userTimes,
+                billingCount,
+                revenueTotal,
             };
         } catch (error) {
             throw error;

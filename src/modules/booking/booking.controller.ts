@@ -105,7 +105,6 @@ export class BookingController {
     ) {
         try {
             body.createdBy = req.loginUser.id;
-            body.status = BookingStatus.WAITING;
             const newBooking = await this.bookingService.createBooking(body);
             await this.databaseService.recordUserLogging({
                 userId: req.loginUser?.id,

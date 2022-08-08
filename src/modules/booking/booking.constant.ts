@@ -32,14 +32,9 @@ export enum TableStatus {
 
 export const BookingSchema = {
     status: Joi.string()
-        .allow(null)
-        .valid(
-            BookingStatus.WAITING,
-            BookingStatus.CANCELED,
-            BookingStatus.DONE,
-        )
         .optional()
-        .label('booking.fields.status'),
+        .allow(null, '')
+        .valid(...Object.values(BookingStatus)),
     nameCustomer: Joi.string()
         .max(INPUT_TEXT_MAX_LENGTH)
         .label('booking.fields.nameCustomer'),

@@ -41,7 +41,7 @@ export class ReportRevenueService {
         private readonly dbManager: EntityManager,
     ) {}
 
-    generateQueryBuilder(queryBuilder, { keyword }) {
+    generateQueryBuilder(queryBuilder, { keyword, dateRange }) {
         if (keyword) {
             const likeKeyword = `%${keyword}%`;
             queryBuilder.andWhere(
@@ -51,6 +51,20 @@ export class ReportRevenueService {
                             shiftLeaderId: Like(likeKeyword),
                         },
                     ]);
+                }),
+            );
+        }
+
+        if (dateRange.length === 2) {
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    qb.where(
+                        'reportRevenue.date BETWEEN :startDay AND :endDay',
+                        {
+                            startDay: dateRange[0],
+                            endDay: dateRange[1],
+                        },
+                    );
                 }),
             );
         }
@@ -64,6 +78,7 @@ export class ReportRevenueService {
                 limit = DEFAULT_LIMIT_FOR_PAGINATION,
                 orderBy = DEFAULT_ORDER_BY,
                 orderDirection = ORDER_DIRECTION.ASC,
+                dateRange = [],
             } = query;
             const take = +limit || DEFAULT_LIMIT_FOR_PAGINATION;
             const skip = (+page - 1) * take || 0;
@@ -74,6 +89,7 @@ export class ReportRevenueService {
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
+                            dateRange,
                         }),
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),

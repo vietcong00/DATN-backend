@@ -47,7 +47,7 @@ export class BillingService {
         private readonly dbManager: EntityManager,
     ) {}
 
-    generateQueryBuilder(queryBuilder, { keyword }) {
+    generateQueryBuilder(queryBuilder, { keyword, paymentTimeRange }) {
         if (keyword) {
             const likeKeyword = `%${keyword}%`;
             queryBuilder.andWhere(
@@ -57,6 +57,19 @@ export class BillingService {
                             shiftLeaderId: Like(likeKeyword),
                         },
                     ]);
+                }),
+            );
+        }
+        if (paymentTimeRange.length === 2) {
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    qb.where(
+                        'billing.paymentTime BETWEEN :startDay AND :endDay',
+                        {
+                            startDay: paymentTimeRange[0],
+                            endDay: paymentTimeRange[1],
+                        },
+                    );
                 }),
             );
         }
@@ -70,6 +83,7 @@ export class BillingService {
                 limit = DEFAULT_LIMIT_FOR_PAGINATION,
                 orderBy = DEFAULT_ORDER_BY,
                 orderDirection = ORDER_DIRECTION.ASC,
+                paymentTimeRange = [],
             } = query;
             const take = +limit || DEFAULT_LIMIT_FOR_PAGINATION;
             const skip = (+page - 1) * take || 0;
@@ -80,6 +94,7 @@ export class BillingService {
                     where: (queryBuilder) =>
                         this.generateQueryBuilder(queryBuilder, {
                             keyword,
+                            paymentTimeRange,
                         }),
                     order: {
                         [orderBy]: orderDirection.toUpperCase(),

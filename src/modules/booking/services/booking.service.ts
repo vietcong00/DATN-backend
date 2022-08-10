@@ -1,6 +1,3 @@
-import { BillingStatus } from './../../billing/billing.constant';
-import { Billing } from './../../billing/entity/billing.entity';
-import { BLOCK_TIME_BOOKING } from './../../../common/constants';
 import { BookingDetailResponseDto } from './../dto/responses/booking-response.dto';
 import { UpdateBookingDto } from './../dto/requests/update-booking.dto';
 import { CreateBookingDto } from './../dto/requests/create-booking.dto';
@@ -15,7 +12,6 @@ import { Brackets, EntityManager, In, Like } from 'typeorm';
 import { Booking } from '../entity/booking.entity';
 import { BookingListQueryStringDto } from '../dto/requests/list-booking.dto';
 import { BookingStatus } from '../booking.constant';
-import { calculateDuration } from 'src/common/helpers/common.function';
 
 const bookingAttributes: (keyof Booking)[] = [
     'id',

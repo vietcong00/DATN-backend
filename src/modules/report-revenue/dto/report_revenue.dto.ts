@@ -26,6 +26,12 @@ export const ReportRevenueListQueryStringSchema = Joi.object().keys({
         .valid(...Object.values(ORDER_DIRECTION))
         .optional()
         .allow(null, ''),
+    dateRange: Joi.array()
+        .items(Joi.date())
+        .optional()
+        .length(2)
+        .allow('')
+        .label('billing.fields.payDate'),
 });
 
 export const ReportRevenueSchema = {
@@ -68,6 +74,7 @@ export class ReportRevenueQueryStringDto {
     keyword?: string;
     orderBy?: OrderBy;
     orderDirection?: ORDER_DIRECTION;
+    dateRange?: Date;
 }
 
 export class CreateReportRevenueDto {

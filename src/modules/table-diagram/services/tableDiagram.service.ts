@@ -106,10 +106,7 @@ export class TableDiagramService {
             const bookings = await this.dbManager.find(Booking, {
                 select: ['id', 'tableId'],
                 where: {
-                    status: In([
-                        BookingStatus.WAITING,
-                        BookingStatus.WAITING_FOR_APPROVE,
-                    ]),
+                    status: In([BookingStatus.WAITING]),
                 },
             });
 
@@ -257,19 +254,21 @@ export class TableDiagramService {
     async checkCanSetupTable(
         timeArrival: Date,
         tableId: number,
+        currentBookingId?: number,
     ): Promise<boolean> {
         try {
             const bookings = await this.dbManager.find(Booking, {
                 where: { tableId, status: BookingStatus.WAITING },
             });
             console.log(bookings);
+            console.log(timeArrival);
 
             return !bookings.some((item) => {
                 return (
                     calculateDuration(
                         new Date(timeArrival).toUTCString(),
                         item.arrivalTime.toUTCString(),
-                    ) < BLOCK_TIME_BOOKING
+                    ) < BLOCK_TIME_BOOKING && item.id !== currentBookingId
                 );
             });
         } catch (error) {

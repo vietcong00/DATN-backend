@@ -57,9 +57,6 @@ export class UserService {
                         {
                             address: Like(likeKeyword),
                         },
-                        {
-                            hometownAddress: Like(likeKeyword),
-                        },
                     ]);
                 }),
             );
@@ -134,6 +131,7 @@ export class UserService {
             if (limit && page)
                 _queryBuilder.take(limit).skip((page - 1) * limit);
             const [items, totalItems] = await _queryBuilder.getManyAndCount();
+
             return {
                 items: items.map((item) => {
                     return {

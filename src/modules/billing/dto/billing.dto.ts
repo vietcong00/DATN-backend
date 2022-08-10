@@ -34,6 +34,12 @@ export const BillingListQueryStringSchema = Joi.object().keys({
         .valid(...Object.values(ORDER_DIRECTION))
         .optional()
         .allow(null, ''),
+    paymentTimeRange: Joi.array()
+        .items(Joi.date())
+        .optional()
+        .length(2)
+        .allow('')
+        .label('billing.fields.payDate'),
 });
 
 export const BillingSchema = {
@@ -83,6 +89,7 @@ export class BillingQueryStringDto {
     keyword?: string;
     orderBy?: OrderBy;
     orderDirection?: ORDER_DIRECTION;
+    paymentTimeRange?: Date;
 }
 
 export class CreateBillingDto {

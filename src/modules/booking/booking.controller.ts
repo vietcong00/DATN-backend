@@ -45,6 +45,8 @@ import { HttpStatus } from 'src/common/constants';
 import { RemoveEmptyQueryPipe } from 'src/common/pipes/remove.empty.query.pipe';
 import { TrimObjectPipe } from 'src/common/pipes/trim.object.pipe';
 import { PermissionActions, PermissionResources } from '../role/role.constants';
+import { BillingService } from '../billing/service/billing.service';
+import { BillingStatus } from '../billing/billing.constant';
 
 @Controller({
     path: 'booking',
@@ -53,6 +55,7 @@ import { PermissionActions, PermissionResources } from '../role/role.constants';
 export class BookingController {
     constructor(
         private readonly bookingService: BookingService,
+        private readonly billingService: BillingService,
         private readonly tableDiagramService: TableDiagramService,
         private readonly databaseService: DatabaseService,
         private readonly i18n: I18nRequestScopeService,
@@ -147,6 +150,7 @@ export class BookingController {
                     !(await this.tableDiagramService.checkCanSetupTable(
                         body.arrivalTime,
                         body.tableId,
+                        oldBooking.id,
                     ))
                 ) {
                     const message = await this.i18n.translate(
@@ -157,8 +161,17 @@ export class BookingController {
                         message,
                         [],
                     );
+                } else if (body.status == BookingStatus.DONE) {
+                    await this.billingService.createBilling({
+                        customerName: body?.nameCustomer || '',
+                        customerPhone: body?.phone || '',
+                        tableId: body?.tableId || 0,
+                        arrivalTime: new Date(),
+                        billingStatus: BillingStatus.EATING,
+                    });
                 }
             }
+
             const updatedBooking = await this.bookingService.updateBooking(
                 id,
                 body,
@@ -173,12 +186,6 @@ export class BookingController {
             //     isExistBookingWaiting,
             // );
 
-            await this.databaseService.recordUserLogging({
-                userId: req.loginUser?.id,
-                route: req.route,
-                oldValue: { ...oldBooking },
-                newValue: { ...updatedBooking },
-            });
             return new SuccessResponse(updatedBooking);
         } catch (error) {
             throw new InternalServerErrorException(error);

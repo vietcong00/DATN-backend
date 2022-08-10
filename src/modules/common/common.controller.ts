@@ -1,3 +1,5 @@
+import { BookingService } from './../booking/services/booking.service';
+import { TableDiagramService } from './../table-diagram/services/tableDiagram.service';
 import { FoodBillingService } from './../food-billing/service/food-billing.service';
 import {
     ErrorResponse,
@@ -47,11 +49,22 @@ import { HttpStatus } from 'src/common/constants';
 import { BillingService } from '../billing/service/billing.service';
 import { BillingStatus } from '../billing/billing.constant';
 import { I18nRequestScopeService } from 'nestjs-i18n';
+import {
+    TableListQueryStringSchema,
+    TableListQueryStringDto,
+} from '../table-diagram/dto/requests/list-tablesRestaurant.dto';
+import {
+    CreateBookingSchema,
+    CreateBookingDto,
+} from '../booking/dto/requests/create-booking.dto';
+import { BookingStatus } from '../booking/booking.constant';
 
 @Controller('common')
 export class CommonController {
     constructor(
         private readonly commonDropdownService: CommonDropdownService,
+        private readonly bookingService: BookingService,
+        private readonly tableDiagramService: TableDiagramService,
         private readonly mobileService: MobileService,
         private readonly billingService: BillingService,
         private readonly foodBillingService: FoodBillingService,
@@ -222,6 +235,38 @@ export class CommonController {
                 billingStatus: BillingStatus.WAIT_FOR_PAY,
             });
             return new SuccessResponse(billing);
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+    }
+
+    @Get('table')
+    async getTables(
+        @Query(
+            new RemoveEmptyQueryPipe(),
+            new JoiValidationPipe(TableListQueryStringSchema),
+        )
+        query: TableListQueryStringDto,
+    ) {
+        try {
+            const tableList = await this.tableDiagramService.getTableList(
+                query,
+            );
+            return new SuccessResponse(tableList);
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+    }
+
+    @Post('booking')
+    async create(
+        @Body(new TrimObjectPipe(), new JoiValidationPipe(CreateBookingSchema))
+        body: CreateBookingDto,
+    ) {
+        try {
+            body.status = BookingStatus.WAITING_FOR_APPROVE;
+            const newBooking = await this.bookingService.createBooking(body);
+            return new SuccessResponse(newBooking);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

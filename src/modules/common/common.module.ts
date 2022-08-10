@@ -14,6 +14,7 @@ import { BookingService } from '../booking/services/booking.service';
 import { MobileService } from './services/mobile.service';
 import { FoodBillingService } from '../food-billing/service/food-billing.service';
 import { BillingService } from '../billing/service/billing.service';
+import { TableDiagramService } from '../table-diagram/services/tableDiagram.service';
 
 @Global()
 @Module({
@@ -41,6 +42,7 @@ import { BillingService } from '../billing/service/billing.service';
         MobileService,
         FoodBillingService,
         BillingService,
+        TableDiagramService,
     ],
     exports: [ConfigService, ProvinceService, GlobalDataService],
 })

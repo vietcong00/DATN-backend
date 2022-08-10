@@ -4,7 +4,6 @@ import {
     INPUT_TEXT_MAX_LENGTH,
     REGEX,
     MAX_INTEGER,
-    DATE_TIME_FORMAT,
     INPUT_PHONE_MAX_LENGTH,
 } from '../../common/constants';
 
@@ -48,9 +47,7 @@ export const BookingSchema = {
         .positive()
         .max(MAX_INTEGER)
         .label('booking.fields.tableId'),
-    arrivalTime: Joi.date()
-        .format(DATE_TIME_FORMAT.YYYY_MM_DD_HYPHEN_HH_MM_COLON)
-        .label('booking.fields.arrivalTime'),
+    arrivalTime: Joi.date().label('booking.fields.arrivalTime'),
     numberPeople: Joi.number()
         .positive()
         .max(MAX_INTEGER)

@@ -262,6 +262,7 @@ export class TableDiagramService {
             const bookings = await this.dbManager.find(Booking, {
                 where: { tableId, status: BookingStatus.WAITING },
             });
+            console.log(bookings);
 
             return !bookings.some((item) => {
                 return (
